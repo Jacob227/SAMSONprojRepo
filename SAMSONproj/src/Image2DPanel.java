@@ -29,6 +29,7 @@ public Image2DPanel() {
 	Height = 500;
 	width = 800;
 	R = 250;
+	int ss = 5;
 	bfImg = new BuffImage();
 	pan = new JPanel();
 	jbut = new JButton("RePaint");
