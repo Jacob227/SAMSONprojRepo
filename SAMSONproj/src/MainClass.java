@@ -14,7 +14,12 @@ public class MainClass {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		new MainFrame();
+		try {
+			new MainFrame();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	/*	try {
 			MainFrame img2d = new MainFrame();
 		} catch (IOException e) {

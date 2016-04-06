@@ -37,10 +37,16 @@ public class MainFrame extends JFrame  {
 	private int size_Main_frame_x = 900;
 	private int size_Main_frame_y = 600;
 	private int size_internal_Main_frame_x = size_Main_frame_x - 20;
-	private int size__internal_Main_frame_y = size_Main_frame_y - size_Main_frame_y/3;
+	private int size_internal_Main_frame_y = size_Main_frame_y - size_Main_frame_y/3;
+	
+	private int R,G,B = 0;
+	private float x_pix_size = 0;
+	private float y_pix_size = 0;
+	private int mid_x = 0;
+	private int mid_y = 0;
 	
 	
-	public MainFrame() {
+	public MainFrame() throws InterruptedException {
 		// TODO Auto-generated constructor stub
 		
 		JMenuBar mb = new JMenuBar();	//Menu bar 
@@ -57,11 +63,11 @@ public class MainFrame extends JFrame  {
 		
 		desktop = new JDesktopPane();
 		newWindow = new JInternalFrame(("2D Window"), true, true, true, true); //1st boolean - Resizable //2nd boolean - Closable //3rd boolean - Maximizable //4th boolean - Iconifiable 
-		bfImg = new BuffImage();
-		//bfImg.addScaledImage(size_internal_Main_frame_x - 15 , size__internal_Main_frame_y - 15);
-		newWindow.add(bfImg,BorderLayout.NORTH);
+		bfImg = new BuffImage(size_internal_Main_frame_x - 10,size_internal_Main_frame_y - 10);
+		//bfImg.addScaledImage(size_internal_Main_frame_x - 15 , size_internal_Main_frame_y - 15);
+		newWindow.add(bfImg);
 		newWindow.setVisible(true);
-		newWindow.setSize(size_internal_Main_frame_x, size__internal_Main_frame_y );
+		newWindow.setSize(size_internal_Main_frame_x, size_internal_Main_frame_y );
 		newWindow.setMinimumSize(new Dimension(300, 240));	
 		desktop.add(newWindow);
 		newWindow.moveToFront();
@@ -72,7 +78,61 @@ public class MainFrame extends JFrame  {
 		this.setSize(size_Main_frame_x,size_Main_frame_y);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
-		this.setLocationRelativeTo(null);
+		//this.setLocationRelativeTo(null);
+		try {
+			paintOrbit();
+		} catch (NumberFormatException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void paintOrbit() throws NumberFormatException, IOException, InterruptedException{
+		String csvFilename = "C:\\Users\\jacob1\\Desktop\\param\\OutFileSatAlpha.csv";
+		CSVReader csvReader = new CSVReader(new FileReader(csvFilename));
+		String[] row = null;
+		int count = 0;
+		x_pix_size = bfImg.getImg().getWidth() / 360;
+		y_pix_size = bfImg.getImg().getHeight() / 180;
+		mid_x = bfImg.getImg().getWidth() / 2;
+		mid_y = bfImg.getImg().getHeight() / 2;
+		boolean first = false;
+		R = 255;
+		int col = (R <<16) | (G << 8) | B;
+		//TODO add sync on bfImg.getImg() param
+		
+		for (int i = 100; i < 700 ; i++){
+			synchronized (bfImg.getImg()){
+			bfImg.getImg().setRGB( 4, i, col ); // check why some of my line doesn't show.
+			}
+			}
+		//bfImg.addLabel(size_internal_Main_frame_x - 2, size_internal_Main_frame_y - 40);
+		
+		/*
+		while((row = csvReader.readNext()) != null) {
+			if (first){
+				count++;
+				int x = Math.round(Float.valueOf(row[20]));
+				int y = Math.round(Float.valueOf(row[19]));
+				int x1 = Math.round(mid_x + x_pix_size * x);
+				int y1 = Math.round(mid_y - y_pix_size * y);
+				synchronized (bfImg.getImg()){
+				bfImg.getImg().setRGB( x1, y1, col );
+				bfImg.getImg().setRGB( x1 + 1, y1 + 1, col );
+				bfImg.getImg().setRGB( x1 + 2, y1 + 2, col );
+				}
+			}
+			if (count == 500){
+				count = 0;
+				//bfImg.addLabel(size_internal_Main_frame_x, size_internal_Main_frame_y);
+				Thread.sleep(5000);
+				//bfImg.addScaledImage(size_internal_Main_frame_x, size_internal_Main_frame_y);;
+				//newWindow.add(bfImg);
+				//this.setVisible(true);
+			}
+			first = true;
+		}
+		*/
 	}
 	
 	
