@@ -46,6 +46,7 @@ public class MainFrame extends JFrame  {
 	private int mid_y = 0;
 	
 	
+	
 	public MainFrame() throws InterruptedException {
 		// TODO Auto-generated constructor stub
 		
@@ -92,50 +93,51 @@ public class MainFrame extends JFrame  {
 		CSVReader csvReader = new CSVReader(new FileReader(csvFilename));
 		String[] row = null;
 		int count = 0;
-		x_pix_size = bfImg.getImg().getWidth() / 360;
-		y_pix_size = bfImg.getImg().getHeight() / 180;
+		x_pix_size = (float) (((float)bfImg.getImg().getWidth() / 360) - 0.1);
+		y_pix_size = (float)bfImg.getImg().getHeight() / 180;
 		mid_x = bfImg.getImg().getWidth() / 2;
 		mid_y = bfImg.getImg().getHeight() / 2;
 		boolean first = false;
 		R = 255;
 		int col = (R <<16) | (G << 8) | B;
 		//TODO add sync on bfImg.getImg() param
-		
-		for (int i = 100; i < 700 ; i++){
-			synchronized (bfImg.getImg()){
-			bfImg.getImg().setRGB( 4, i, col ); // check why some of my line doesn't show.
-			}
-			}
+		/*
+		for (int i = 1; i < 303 ; i++){
+			for (int j = 1 ; j < 404; j++ )
+			bfImg.getImg().setRGB( i, j, col ); // check why some of my line doesn't show.	
+			} 
+			*/
+		//bfImg.repaint();
 		//bfImg.addLabel(size_internal_Main_frame_x - 2, size_internal_Main_frame_y - 40);
 		
-		/*
 		while((row = csvReader.readNext()) != null) {
 			if (first){
 				count++;
 				int x = Math.round(Float.valueOf(row[20]));
 				int y = Math.round(Float.valueOf(row[19]));
 				int x1 = Math.round(mid_x + x_pix_size * x);
-				int y1 = Math.round(mid_y - y_pix_size * y);
-				synchronized (bfImg.getImg()){
+				int y1 = Math.round(mid_y - y_pix_size * y );
+				if (x1 > 0 && x1 <130)
+					System.out.println(x1 + " " + y1);
+				//synchronized (bfImg.getImg()){
 				bfImg.getImg().setRGB( x1, y1, col );
 				bfImg.getImg().setRGB( x1 + 1, y1 + 1, col );
 				bfImg.getImg().setRGB( x1 + 2, y1 + 2, col );
-				}
-			}
+			   }
 			if (count == 500){
 				count = 0;
+				//bfImg.setFlag(true);
 				//bfImg.addLabel(size_internal_Main_frame_x, size_internal_Main_frame_y);
-				Thread.sleep(5000);
+				Thread.sleep(2000);
+				//bfImg.setFlag(false);
 				//bfImg.addScaledImage(size_internal_Main_frame_x, size_internal_Main_frame_y);;
 				//newWindow.add(bfImg);
 				//this.setVisible(true);
 			}
 			first = true;
-		}
-		*/
+		 } 
+		bfImg.setFlag(true);
 	}
-	
-	
 }
 
 

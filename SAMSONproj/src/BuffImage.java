@@ -20,20 +20,31 @@ public class BuffImage extends JPanel {
 	private BufferedImage hugeImage;
 	//private JPanel ImagePanel;
 	private JLabel jlb;
-	
+	private boolean flag;
+
 	public BuffImage(int w, int h) {
 		// TODO Auto-generated constructor stub
 		super();
 		this.setSize(w, h);	
+		flag = false;
 		File str = new File("C:\\Earth2048x1024.jpg");
 		 try {
 			 hugeImage = ImageIO.read(str);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	public boolean isFlag() {
+		return flag;
+	}
+
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
+
 	public static BufferedImage resize(BufferedImage image, int width, int height) {
 	    BufferedImage bi = new BufferedImage(width, height, BufferedImage.TRANSLUCENT);
 	    Graphics2D g2d = (Graphics2D) bi.createGraphics();
@@ -61,11 +72,13 @@ public class BuffImage extends JPanel {
 	public void paintComponent(Graphics arg0) {
 		// TODO Auto-generated method stub
 		super.paintComponent(arg0);
-		//arg0.fillRect(0, 0, 800, 900);		
-		synchronized(hugeImage) {
-		arg0.drawImage(hugeImage,0,0,getWidth(),getHeight(),null);
-		repaint();
-		}
+		//arg0.fillRect(0, 0, 800, 900);
+		//if (flag){
+			synchronized(hugeImage) {
+				arg0.drawImage(hugeImage,0,0,getWidth(),getHeight(),null);
+				repaint();	
+		//}
+	}
 	}
 	
-}
+}	
