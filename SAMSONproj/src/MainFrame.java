@@ -24,12 +24,14 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -41,39 +43,41 @@ import com.opencsv.CSVReader;
 
 public class MainFrame extends JFrame  {
 	
-	//private BuffImage bfImg;
 	private JDesktopPane desktop;
-	//private JInternalFrame Window2d;
-	//private JInternalFrame paramWindow;
 	private JPanel top;
-	//private JTextArea paramText;
-	//private JScrollPane scroller1;
-	
-	private int size_Main_frame_x = 1000;
-	private int size_Main_frame_y = 750;
+
+	private int size_Main_frame_x = 900;
+	private int size_Main_frame_y = 650;
 	private int size_internal_Main_frame_x = size_Main_frame_x - 20;
 	private int size_internal_Main_frame_y = size_Main_frame_y - size_Main_frame_y/3;
 	private int size_internal_Param_frame_x = size_internal_Main_frame_x;
 	private int size_internal_Param_frame_y = size_Main_frame_y - size_internal_Main_frame_y - 65;
 	private int sizeOfPanelPlay_X = 100;
 	private int sizeOfPanelPlay_Y = size_internal_Param_frame_y - 35;
+	private File selectedCSVFile = null;
+	private Boolean flagCSVFile = false;
 	
 	private MenuBarClass mb;
 	private ParametersFrame paramFr;
 	private Windows2DInternalFrame Window2d;
 	private SpeedPanel speedPan;
 	private Vector<ExcelParameters> exParam;
-	//private String csvFilename= "C:\\Users\\jacob1\\Desktop\\param\\OutFileSatAlpha.csv";
+	private JFileChooser fileChooser;
 	
 	public MainFrame() throws InterruptedException {
 		// TODO Auto-generated constructor stub		
 		mb = new MenuBarClass();	//Menu bar 	
+		mb.addActionlistenerOpenCSVFile(new addCSVFileActionListener());
+		
 		desktop = new JDesktopPane();
 		Window2d = new Windows2DInternalFrame(size_internal_Main_frame_x, size_internal_Main_frame_y);
+		
 		desktop.add(Window2d);
 		paramFr = new ParametersFrame(sizeOfPanelPlay_X, size_internal_Main_frame_y + 1, size_internal_Param_frame_x - sizeOfPanelPlay_X, size_internal_Param_frame_y);
 		desktop.add(paramFr);
+		
 		speedPan = new SpeedPanel(0, size_internal_Main_frame_y +1, sizeOfPanelPlay_X, sizeOfPanelPlay_Y + 35);
+		speedPan.addPlayActionListener(new RunActionListener());
 		speedPan.setVisible(true);
 		
 		this.getContentPane().add(speedPan);		
@@ -85,12 +89,53 @@ public class MainFrame extends JFrame  {
 		this.setVisible(true);
 		validate();
 		exParam = new Vector();
-		try {
-			Window2d.getBfImg().initAllParam();
-			Window2d.getBfImg().paintOrbit1(paramFr.getParamText(),exParam);
-		} catch (NumberFormatException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
+	
+	public class RunActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			if(flagCSVFile){
+				try {
+					Window2d.getBfImg().initAllParam();
+					Window2d.getBfImg().paintOrbit1(paramFr.getParamText(),exParam);
+				} catch (NumberFormatException | IOException | InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				}
+			else{
+				JOptionPane.showMessageDialog(null, "Insert CSV file first!\nEdit -> Open CSV File", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+		
+	}
+	
+	public class addCSVFileActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			fileChooser = new JFileChooser("Open CSV File");
+			fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+			int result = fileChooser.showOpenDialog(getParent());
+			if (result == JFileChooser.APPROVE_OPTION) {
+				selectedCSVFile = fileChooser.getSelectedFile();
+				 System.out.println("Selected file: " + selectedCSVFile.getAbsolutePath());
+				if (selectedCSVFile.getAbsolutePath().contains(".csv") || selectedCSVFile.getAbsolutePath().contains(".CSV")){
+					Window2d.getBfImg().setCsvFilename(selectedCSVFile.getAbsolutePath());
+					flagCSVFile = true;
+				}
+				else{
+					flagCSVFile = false;
+					JOptionPane.showMessageDialog(null, "You must choose only CSV File!", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+				}
+
+			}
+		}
+		
+	}
+	
 }

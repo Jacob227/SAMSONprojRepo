@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -10,6 +11,7 @@ import javax.swing.border.Border;
 public class SpeedPanel extends JPanel {
 	
 	private JButton playButt;
+	
 	private JButton StopButt;
 	private JButton PauseButt;
 	private JButton FastButt ;
@@ -51,5 +53,48 @@ protected void paintComponent(Graphics arg0) {
 	repaint();
 }
 
+public void addPlayActionListener(ActionListener al){
+	playButt.addActionListener(al);
+}
+
+public JButton getPlayButt() {
+	return playButt;
+}
+
+public void setPlayButt(JButton playButt) {
+	this.playButt = playButt;
+}
+
+public JButton getStopButt() {
+	return StopButt;
+}
+
+public void setStopButt(JButton stopButt) {
+	StopButt = stopButt;
+}
+
+public JButton getPauseButt() {
+	return PauseButt;
+}
+
+public void setPauseButt(JButton pauseButt) {
+	PauseButt = pauseButt;
+}
+
+public JButton getFastButt() {
+	return FastButt;
+}
+
+public void setFastButt(JButton fastButt) {
+	FastButt = fastButt;
+}
+
+public JButton getClearDataButt() {
+	return clearDataButt;
+}
+
+public void setClearDataButt(JButton clearDataButt) {
+	this.clearDataButt = clearDataButt;
+}
 
 }

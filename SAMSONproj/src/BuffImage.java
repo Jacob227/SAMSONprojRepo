@@ -34,6 +34,7 @@ public class BuffImage extends JPanel {
 	private boolean flag;
 	private Vector<Point> PointList = null;
 	private CSVReader csvReader;
+	
 	private String imageFile = "ImagesAndIcons\\Earth2048x1024.jpg";
 	
 	private int size_Main_frame_x = 900;
@@ -46,8 +47,8 @@ public class BuffImage extends JPanel {
 	private float y_pix_size = 0;
 	private int mid_x = 0;
 	private int mid_y = 0;
-	private String csvFilename= "ImagesAndIcons\\OutFileSatAlpha.csv";
-
+	private String csvFilename= "";
+	
 	public BuffImage(int w, int h) {
 		// TODO Auto-generated constructor stub
 		super();
@@ -101,6 +102,10 @@ public class BuffImage extends JPanel {
 				}
 			//arg0.draw
 			}
+			else{
+				arg0.drawImage(hugeImage,0,0,getWidth(),getHeight(),null);
+				repaint();
+			}
 
 		//}
 	}
@@ -141,10 +146,11 @@ public class BuffImage extends JPanel {
 				if (x1 != mid_x && x1 < getWidth() - 2 && x1 > 1 && y1 > 1 && y1 < getHeight() - 2)
 					PointList.add(new Point(x1,y1));	
 			   }
-			if (count == 50){
+			if (count == 1000){
 				count = 0;
-				Thread.sleep(1500);
-				this.repaint();
+				Thread.sleep(200);
+				repaint();
+				Thread.sleep(200);
 				param.setText("");
 				for (int i = 0; i < exPar.size(); i++){
 					param.append("Latitude: " +exPar.get(i).getAllData()[19] + ",	Longitude: " + exPar.get(i).getAllData()[20] + "\n");
@@ -153,8 +159,144 @@ public class BuffImage extends JPanel {
 			}
 			first = true;
 		 }
-		Thread.sleep(1000);
+		Thread.sleep(200);
 		
+	}
+	
+	public BufferedImage getHugeImage() {
+		return hugeImage;
+	}
+
+	public void setHugeImage(BufferedImage hugeImage) {
+		this.hugeImage = hugeImage;
+	}
+
+	public JLabel getJlb() {
+		return jlb;
+	}
+
+	public void setJlb(JLabel jlb) {
+		this.jlb = jlb;
+	}
+
+	public Vector<Point> getPointList() {
+		return PointList;
+	}
+
+	public void setPointList(Vector<Point> pointList) {
+		PointList = pointList;
+	}
+
+	public CSVReader getCsvReader() {
+		return csvReader;
+	}
+
+	public void setCsvReader(CSVReader csvReader) {
+		this.csvReader = csvReader;
+	}
+
+	public String getImageFile() {
+		return imageFile;
+	}
+
+	public void setImageFile(String imageFile) {
+		this.imageFile = imageFile;
+	}
+
+	public int getSize_Main_frame_x() {
+		return size_Main_frame_x;
+	}
+
+	public void setSize_Main_frame_x(int size_Main_frame_x) {
+		this.size_Main_frame_x = size_Main_frame_x;
+	}
+
+	public int getSize_Main_frame_y() {
+		return size_Main_frame_y;
+	}
+
+	public void setSize_Main_frame_y(int size_Main_frame_y) {
+		this.size_Main_frame_y = size_Main_frame_y;
+	}
+
+	public int getSize_internal_Main_frame_x() {
+		return size_internal_Main_frame_x;
+	}
+
+	public void setSize_internal_Main_frame_x(int size_internal_Main_frame_x) {
+		this.size_internal_Main_frame_x = size_internal_Main_frame_x;
+	}
+
+	public int getSize_internal_Main_frame_y() {
+		return size_internal_Main_frame_y;
+	}
+
+	public void setSize_internal_Main_frame_y(int size_internal_Main_frame_y) {
+		this.size_internal_Main_frame_y = size_internal_Main_frame_y;
+	}
+
+	public int getR() {
+		return R;
+	}
+
+	public void setR(int r) {
+		R = r;
+	}
+
+	public int getG() {
+		return G;
+	}
+
+	public void setG(int g) {
+		G = g;
+	}
+
+	public int getB() {
+		return B;
+	}
+
+	public void setB(int b) {
+		B = b;
+	}
+
+	public float getX_pix_size() {
+		return x_pix_size;
+	}
+
+	public void setX_pix_size(float x_pix_size) {
+		this.x_pix_size = x_pix_size;
+	}
+
+	public float getY_pix_size() {
+		return y_pix_size;
+	}
+
+	public void setY_pix_size(float y_pix_size) {
+		this.y_pix_size = y_pix_size;
+	}
+
+	public int getMid_x() {
+		return mid_x;
+	}
+
+	public void setMid_x(int mid_x) {
+		this.mid_x = mid_x;
+	}
+
+	public int getMid_y() {
+		return mid_y;
+	}
+
+	public void setMid_y(int mid_y) {
+		this.mid_y = mid_y;
+	}
+
+	public String getCsvFilename() {
+		return csvFilename;
+	}
+
+	public void setCsvFilename(String csvFilename) {
+		this.csvFilename = csvFilename;
 	}
 	
 }

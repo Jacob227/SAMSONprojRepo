@@ -5,3 +5,5 @@
 /ParametersFrame.class
 /SpeedPanel.class
 /Windows2DInternalFrame.class
+/MainFrame$addCSVFileActionListener.class
+/MainFrame$RunActionListener.class
