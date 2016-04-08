@@ -70,6 +70,7 @@ public class MainFrame extends JFrame  {
 		mb = new MenuBarClass();	//Menu bar 	
 		mb.addActionlistenerOpenCSVFile(new addCSVFileActionListener());
 		mb.addActionlistenerOpen2d(new ActionlistenerOpen2d() );
+		mb.addActionlistenerExit(new ActionlistenerExit());
 		
 		desktop = new JDesktopPane();
 		Window2d = new Windows2DInternalFrame(size_internal_Main_frame_x, size_internal_Main_frame_y);
@@ -93,6 +94,14 @@ public class MainFrame extends JFrame  {
 		validate();
 		exParam = new Vector();
 
+	}
+	
+	public class ActionlistenerExit implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			System.exit(1);
+		}
 	}
 	
 	public class ActionlistenerOpen2d implements ActionListener{

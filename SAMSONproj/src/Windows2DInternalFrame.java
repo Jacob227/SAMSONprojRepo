@@ -26,7 +26,7 @@ public class Windows2DInternalFrame extends JInternalFrame {
 		tempForClose = this;
 		this.size_internal_2d_frame_x = size_internal_Main_frame_x;
 		this.size_internal_2d_frame_y = size_internal_Main_frame_y;
-		bfImg = new BuffImage(size_internal_Main_frame_x - 10, size_internal_Main_frame_y - 10 );
+		bfImg = new BuffImage(size_internal_Main_frame_x - 10, size_internal_Main_frame_y - 10 ); //2d earth panel
 		this.add(bfImg);
 		this.setSize(size_internal_Main_frame_x, size_internal_Main_frame_y);
 		this.setMaximumSize(new Dimension(300, 240));
