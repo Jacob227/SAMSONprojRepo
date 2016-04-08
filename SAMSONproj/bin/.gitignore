@@ -13,3 +13,8 @@
 /Windows2DInternalFrame$addInternalFrameListener.class
 /Windows2DInternalFrame$addActionListenerClose.class
 /MainFrame$ActionlistenerExit.class
+/sat_icon.png
+/MainFrame$pauseActionListener.class
+/MainFrame$stopActionListener.class
+/MainFrame$nextActionListener.class
+/BuffImage$PaintThread.class

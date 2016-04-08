@@ -16,6 +16,7 @@ public class SpeedPanel extends JPanel {
 	private JButton PauseButt;
 	private JButton FastButt ;
 	private JButton clearDataButt;
+	private JButton clearOrbitButt;
 	
 public SpeedPanel(int x, int y, int size_x, int size_y) {
 	// TODO Auto-generated constructor stub
@@ -24,13 +25,15 @@ public SpeedPanel(int x, int y, int size_x, int size_y) {
 	 StopButt = new JButton(new ImageIcon("ImagesAndIcons\\StopIcon.png"));
 	 PauseButt = new JButton(new ImageIcon("ImagesAndIcons\\pauseIcin.png"));
 	 FastButt = new JButton(new ImageIcon("ImagesAndIcons\\Faster.png"));
-	 clearDataButt = new JButton("Clear All");
+	 clearDataButt = new JButton("Clear Data");
+	 clearOrbitButt = new JButton("Clear Orbit");
 	
-	playButt.setBounds(7, 15, 37, 37);
-	StopButt.setBounds(7, 60, 37, 37);	
-	PauseButt.setBounds(55, 15, 37, 37);
-	FastButt.setBounds(55, 60,37 , 37);
+	playButt.setBounds(7, 5, 37, 37);
+	StopButt.setBounds(7, 47, 37, 37);	
+	PauseButt.setBounds(55, 47, 37, 37);
+	FastButt.setBounds(55, 5,37 , 37);
 	clearDataButt.setBounds(5, 120, 90 , 25);
+	clearOrbitButt.setBounds(5, 90, 90, 25);
 	
 	Border blackline = BorderFactory.createLineBorder(Color.black);
 	this.setLayout(null);
@@ -43,6 +46,7 @@ public SpeedPanel(int x, int y, int size_x, int size_y) {
 	this.add(PauseButt);
 	this.add(FastButt);
 	this.add(clearDataButt);
+	this.add(clearOrbitButt);
 	
 }
 
@@ -59,6 +63,18 @@ public void addPlayActionListener(ActionListener al){
 
 public void addClearActionListener(ActionListener al){
 	clearDataButt.addActionListener(al);
+}
+
+public void addStopActionListener(ActionListener al){
+	StopButt.addActionListener(al);
+}
+
+public void addPauseActionListener(ActionListener al){
+	PauseButt.addActionListener(al);
+}
+
+public void addNextActionListener(ActionListener al){
+	FastButt.addActionListener(al);
 }
 
 public JButton getPlayButt() {

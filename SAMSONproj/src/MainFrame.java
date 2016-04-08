@@ -57,12 +57,12 @@ public class MainFrame extends JFrame  {
 	private int sizeOfPanelPlay_Y = size_internal_Param_frame_y - 35;
 	private File selectedCSVFile = null;
 	private Boolean flagCSVFile = false;
+	private ArrayList<String> csvFile;
 	
 	private MenuBarClass mb;
 	private ParametersFrame paramFr;
 	private Windows2DInternalFrame Window2d;
 	private SpeedPanel speedPan;
-	private Vector<ExcelParameters> exParam;
 	private JFileChooser fileChooser;
 	
 	public MainFrame() throws InterruptedException {
@@ -81,6 +81,9 @@ public class MainFrame extends JFrame  {
 		
 		speedPan = new SpeedPanel(0, size_internal_Main_frame_y +1, sizeOfPanelPlay_X, sizeOfPanelPlay_Y + 35);
 		speedPan.addPlayActionListener(new RunActionListener());
+		speedPan.addStopActionListener(new stopActionListener());
+		speedPan.addPauseActionListener(new pauseActionListener());
+		speedPan.addNextActionListener(new nextActionListener());
 		speedPan.addClearActionListener(new ClearActionListener());
 		speedPan.setVisible(true);
 		
@@ -92,7 +95,6 @@ public class MainFrame extends JFrame  {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
 		validate();
-		exParam = new Vector();
 
 	}
 	
@@ -117,9 +119,9 @@ public class MainFrame extends JFrame  {
 			else{
 				JOptionPane.showMessageDialog(null, "2D Windows is already open", "InfoBox: " + "Error", JOptionPane.INFORMATION_MESSAGE);
 			}
-		}
-		
+		}	
 	}
+	
 	public class ClearActionListener implements ActionListener{
 
 		@Override
@@ -136,9 +138,10 @@ public class MainFrame extends JFrame  {
 			// TODO Auto-generated method stub
 			if(flagCSVFile){
 				try {
-					Window2d.getBfImg().initAllParam();
-					Window2d.getBfImg().paintOrbit1(paramFr.getParamText(),exParam);
-				} catch (NumberFormatException | IOException | InterruptedException e1) {
+					//Window2d.getBfImg().initAllParam();
+					Window2d.getBfImg().startNewPaintThread(paramFr.getParamText()); //create a new thread
+					//Window2d.getBfImg().paintOrbit1(paramFr.getParamText(),exParam);
+				} catch (NumberFormatException | IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
@@ -146,8 +149,51 @@ public class MainFrame extends JFrame  {
 			else{
 				JOptionPane.showMessageDialog(null, "Insert CSV file first!\nEdit -> Open CSV File", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
 			}
+		}	
+	}
+	
+	public class stopActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			if(flagCSVFile){
+
+				}
+			else{
+				JOptionPane.showMessageDialog(null, "Insert CSV file first!\nEdit -> Open CSV File", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 		
+	}
+	
+	public class pauseActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			if(flagCSVFile){
+
+				}
+			else{
+				JOptionPane.showMessageDialog(null, "Insert CSV file first!\nEdit -> Open CSV File", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+		
+	}
+	
+	public class nextActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			if(flagCSVFile){
+				Window2d.getBfImg().nextPaintOrbit();
+				}
+			else{
+				JOptionPane.showMessageDialog(null, "Insert CSV file first!\nEdit -> Open CSV File", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}	
 	}
 	
 	public class addCSVFileActionListener implements ActionListener{
@@ -163,6 +209,12 @@ public class MainFrame extends JFrame  {
 				 System.out.println("Selected file: " + selectedCSVFile.getAbsolutePath());
 				if (selectedCSVFile.getAbsolutePath().contains(".csv") || selectedCSVFile.getAbsolutePath().contains(".CSV")){
 					Window2d.getBfImg().setCsvFilename(selectedCSVFile.getAbsolutePath());
+					try {
+						Window2d.getBfImg().ConversExcel();
+					} catch (NumberFormatException | IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					flagCSVFile = true;
 				}
 				else{
