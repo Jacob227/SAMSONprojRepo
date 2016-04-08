@@ -7,3 +7,8 @@
 /Windows2DInternalFrame.class
 /MainFrame$addCSVFileActionListener.class
 /MainFrame$RunActionListener.class
+/MainFrame$ClearActionListener.class
+/MainFrame$ActionlistenerOpen2d.class
+/Windows2DInternalFrame$InternalFrameAdapter.class
+/Windows2DInternalFrame$addInternalFrameListener.class
+/Windows2DInternalFrame$addActionListenerClose.class

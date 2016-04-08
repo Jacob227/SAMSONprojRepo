@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
 import com.opencsv.CSVReader;
@@ -65,9 +66,10 @@ public class MainFrame extends JFrame  {
 	private JFileChooser fileChooser;
 	
 	public MainFrame() throws InterruptedException {
-		// TODO Auto-generated constructor stub		
+		// TODO Auto-generated constructor stub	
 		mb = new MenuBarClass();	//Menu bar 	
 		mb.addActionlistenerOpenCSVFile(new addCSVFileActionListener());
+		mb.addActionlistenerOpen2d(new ActionlistenerOpen2d() );
 		
 		desktop = new JDesktopPane();
 		Window2d = new Windows2DInternalFrame(size_internal_Main_frame_x, size_internal_Main_frame_y);
@@ -78,6 +80,7 @@ public class MainFrame extends JFrame  {
 		
 		speedPan = new SpeedPanel(0, size_internal_Main_frame_y +1, sizeOfPanelPlay_X, sizeOfPanelPlay_Y + 35);
 		speedPan.addPlayActionListener(new RunActionListener());
+		speedPan.addClearActionListener(new ClearActionListener());
 		speedPan.setVisible(true);
 		
 		this.getContentPane().add(speedPan);		
@@ -90,6 +93,31 @@ public class MainFrame extends JFrame  {
 		validate();
 		exParam = new Vector();
 
+	}
+	
+	public class ActionlistenerOpen2d implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			if (Window2d.getFlagExit() == true){
+				Window2d.setClosable(true);
+				Window2d = new Windows2DInternalFrame(size_internal_Main_frame_x, size_internal_Main_frame_y);
+				desktop.add(Window2d);
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "2D Windows is already open", "InfoBox: " + "Error", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+		
+	}
+	public class ClearActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			paramFr.getParamText().setText("");
+		}	
 	}
 	
 	public class RunActionListener implements ActionListener{

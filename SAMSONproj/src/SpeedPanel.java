@@ -57,6 +57,10 @@ public void addPlayActionListener(ActionListener al){
 	playButt.addActionListener(al);
 }
 
+public void addClearActionListener(ActionListener al){
+	clearDataButt.addActionListener(al);
+}
+
 public JButton getPlayButt() {
 	return playButt;
 }
