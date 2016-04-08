@@ -85,6 +85,7 @@ public class MainFrame extends JFrame  {
 		speedPan.addPauseActionListener(new pauseActionListener());
 		speedPan.addNextActionListener(new nextActionListener());
 		speedPan.addClearActionListener(new ClearActionListener());
+		speedPan.addClearOrbitActionListener(new ClearOrbitActionListener());
 		speedPan.setVisible(true);
 		
 		this.getContentPane().add(speedPan);		
@@ -122,6 +123,13 @@ public class MainFrame extends JFrame  {
 		}	
 	}
 	
+	public class ClearOrbitActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Window2d.getBfImg().clearOrbit();
+		}
+	}
+	
 	public class ClearActionListener implements ActionListener{
 
 		@Override
@@ -139,7 +147,7 @@ public class MainFrame extends JFrame  {
 			if(flagCSVFile){
 				try {
 					//Window2d.getBfImg().initAllParam();
-					Window2d.getBfImg().startNewPaintThread(paramFr.getParamText()); //create a new thread
+					Window2d.getBfImg().startNewPaintThread(); //create a new thread
 					//Window2d.getBfImg().paintOrbit1(paramFr.getParamText(),exParam);
 				} catch (NumberFormatException | IOException e1) {
 					// TODO Auto-generated catch block
@@ -158,7 +166,8 @@ public class MainFrame extends JFrame  {
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 			if(flagCSVFile){
-
+					Window2d.getBfImg().StopAndInitOrbit();
+					//Window2d.getBfImg().repaint();
 				}
 			else{
 				JOptionPane.showMessageDialog(null, "Insert CSV file first!\nEdit -> Open CSV File", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
@@ -211,6 +220,7 @@ public class MainFrame extends JFrame  {
 					Window2d.getBfImg().setCsvFilename(selectedCSVFile.getAbsolutePath());
 					try {
 						Window2d.getBfImg().ConversExcel();
+						Window2d.getBfImg().setParam(paramFr.getParamText());
 					} catch (NumberFormatException | IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();

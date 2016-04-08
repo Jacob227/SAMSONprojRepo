@@ -57,6 +57,10 @@ protected void paintComponent(Graphics arg0) {
 	repaint();
 }
 
+public void addClearOrbitActionListener(ActionListener al){
+	clearOrbitButt.addActionListener(al);
+}
+
 public void addPlayActionListener(ActionListener al){
 	playButt.addActionListener(al);
 }

@@ -38,7 +38,7 @@ public class BuffImage extends JPanel {
 	private PaintThread paintThr;
 	private int indexStop;
 	private int indexStart;
-	
+
 	private String imageFile = "ImagesAndIcons\\Earth2048x1024.jpg";
 	
 	private int Width,Height;
@@ -47,6 +47,7 @@ public class BuffImage extends JPanel {
 	private int size_internal_Main_frame_x = size_Main_frame_x - 20;
 	private int size_internal_Main_frame_y = size_Main_frame_y - size_Main_frame_y/3;
 	private Vector<ExcelParameters> exParam;
+	private JTextArea param;
 	
 	private int R,G,B = 0;
 	private float x_pix_size = 0,y_pix_size = 0;
@@ -78,30 +79,49 @@ public class BuffImage extends JPanel {
 	public void setFlag(boolean flag) {
 		this.flagPaint = flag;
 	}
-	
-	public void addScaledImage(int w,int h){
-		jlb = new JLabel(new ImageIcon(hugeImage.getScaledInstance(w, h, JFrame.EXIT_ON_CLOSE)));
-		this.add(jlb);
-	}
-	
-	public void addLabel(int w,int h){
-		jlb.setIcon(new ImageIcon(hugeImage.getScaledInstance(w, h, JFrame.EXIT_ON_CLOSE)));
-		this.add(jlb);
-	}
 
 	public BufferedImage getImg(){
 		return hugeImage;
 	}
 	
+	public int getIndexStart() {
+		return indexStart;
+	}
+
+	public void setIndexStart(int indexStart) {
+		this.indexStart = indexStart;
+	}
+	
+	public int getIndexStop() {
+		return indexStop;
+	}
+
+	public void setIndexStop(int indexStop) {
+		this.indexStop = indexStop;
+	} 
+	
+	public JTextArea getParam() {
+		return param;
+	}
+
+	public void setParam(JTextArea param) {
+		this.param = param;
+	}
+
+	public void clearOrbit(){
+		indexStart = indexStop;
+		param.setText("");
+		repaint();
+	}
+	
 	@Override
 	public void paintComponent(Graphics arg0) {
 		// TODO Auto-generated method stub
-		super.paintComponent(arg0);
-		
-	//	synchronized(PointList) {
+		super.paintComponent(arg0);		
 			
 			if (flagPaint){
 				arg0.drawImage(hugeImage,0,0,getWidth(),getHeight(),null);
+				param.setText("");
 				for (int i = indexStart ; i < indexStop - 1; i++){
 					int x0 = PointList.get(i).x;
 					int y0 = PointList.get(i).y;
@@ -109,14 +129,13 @@ public class BuffImage extends JPanel {
 					if ((x0 - PointList.get(i+1).x) < (getWidth() / 10) && (y0 - PointList.get(i+1).y) < (getHeight() / 7) 
 							&&(x0 != mid_x && x0 < getWidth() - 2 && x0 > 1 && y0 > 1 && y0 < getHeight() - 2))
 						arg0.drawLine(PointList.get(i).x, PointList.get(i).y, PointList.get(i + 1).x, PointList.get(i + 1).y); // (x0,y0,x1,y1)
+							param.append("Latitude: " +exParam.get(i).getAllData()[19] + ",	Longitude: " + exParam.get(i).getAllData()[20] + "\n");
 				}	
 			}
 			else{
 				arg0.drawImage(hugeImage,0,0,getWidth(),getHeight(),null);
 				repaint();
 			}
-
-		//}
 	}
 	
 	public void initAllParam() throws FileNotFoundException{
@@ -173,6 +192,15 @@ public class BuffImage extends JPanel {
 		Thread.sleep(200);		
 	}
 */
+	
+	public void StopAndInitOrbit(){
+	flagPaint = false;
+	indexStart = 0;
+	indexStop = 0;
+	param.setText("");
+	repaint();
+	}
+	
 	public void nextPaintOrbit(){
 
 		Boolean flag = true;
@@ -195,21 +223,19 @@ public class BuffImage extends JPanel {
 		repaint();
 	}
 	
-	public void startNewPaintThread(JTextArea param) throws FileNotFoundException{
+	public void startNewPaintThread() throws FileNotFoundException{
 		initAllParam();
-		paintThr = new PaintThread(param);
+		paintThr = new PaintThread();
 		paintThr.start();
 	}
 	//-----------------------------------------Paint Thread-----------------------------------//
 
 	public class PaintThread extends Thread {
-			private JTextArea param;
 			
-		    public PaintThread(JTextArea param) {
+		    public PaintThread() {
 			// TODO Auto-generated constructor stub
 		    	indexStop = 0;
 		    	indexStart = 0;
-		    	this.param = param;
 		}
 
 			public void run(){
@@ -234,10 +260,7 @@ public class BuffImage extends JPanel {
 					System.out.println(exParam.get(indexStop).getLongitude() + "  " + exParam.get(indexStop + 1).getLongitude());
 					indexStop++;
 				}
-						//param.setText("");
-						//for (int i = 0; i < exPar.size(); i++){
-						//	param.append("Latitude: " +exPar.get(i).getAllData()[19] + ",	Longitude: " + exPar.get(i).getAllData()[20] + "\n");
-						//}
+
 				repaint();
 		  }
 	}
