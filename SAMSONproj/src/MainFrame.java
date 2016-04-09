@@ -91,7 +91,7 @@ public class MainFrame extends JFrame  {
 		this.getContentPane().add(speedPan);		
 		validate();
 		this.setJMenuBar(mb);
-		this.setBounds(300, 100, size_Main_frame_x, size_Main_frame_y); 
+		this.setBounds(300, 70, size_Main_frame_x, size_Main_frame_y); 
 		this.getContentPane().add(BorderLayout.CENTER, desktop);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);

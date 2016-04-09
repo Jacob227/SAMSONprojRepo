@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Timer;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -29,6 +32,7 @@ import java.awt.image.*;
 public class BuffImage extends JPanel {
 	
 	private BufferedImage hugeImage;
+	private BufferedImage satelliteImg;
 	//private JPanel ImagePanel;
 	private JLabel jlb;
 	//private boolean flagStart,flagStop,flagPause,flagNext;
@@ -38,8 +42,11 @@ public class BuffImage extends JPanel {
 	private PaintThread paintThr;
 	private int indexStop;
 	private int indexStart;
+	private javax.swing.Timer drawtimer;
+	private int intervalDrawing;
 
 	private String imageFile = "ImagesAndIcons\\Earth2048x1024.jpg";
+	private String satDir = "ImagesAndIcons\\sat_icon.png";
 	
 	private int Width,Height;
 	private int size_Main_frame_x = 900;
@@ -49,11 +56,15 @@ public class BuffImage extends JPanel {
 	private Vector<ExcelParameters> exParam;
 	private JTextArea param;
 	
+	int indexSatStart = 0;
+	int indexSatStop = 0;
+	
 	private int R,G,B = 0;
 	private float x_pix_size = 0,y_pix_size = 0;
 	private int mid_x = 0;
 	private int mid_y = 0;
 	private String csvFilename= "";
+
 	
 	public BuffImage(int w, int h) {
 		// TODO Auto-generated constructor stub
@@ -63,51 +74,30 @@ public class BuffImage extends JPanel {
 		//flagStart = false; flagNext = false;
 		//flagPause = false; flagStop = false;
 		File str = new File(imageFile);
+		File str1 = new File(satDir);
+		intervalDrawing = 20;
+		
 		 try {
 			 hugeImage = ImageIO.read(str);
+			 satelliteImg = ImageIO.read(str1);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	public boolean isFlag() {
-		return flagPaint;
-	}
 
-	public void setFlag(boolean flag) {
-		this.flagPaint = flag;
-	}
-
-	public BufferedImage getImg(){
-		return hugeImage;
-	}
-	
-	public int getIndexStart() {
-		return indexStart;
-	}
-
-	public void setIndexStart(int indexStart) {
-		this.indexStart = indexStart;
+	public void initAllParam() throws FileNotFoundException{
+		x_pix_size = (float)getWidth() / 360;
+		y_pix_size = (float)getHeight() / 180;
+		mid_x = getWidth() / 2; 
+		mid_y = getHeight() / 2;
+		R = 255;
+		int col = (R <<16) | (G << 8) | B;
+		Width = getWidth();
+		Height = getHeight();
 	}
 	
-	public int getIndexStop() {
-		return indexStop;
-	}
-
-	public void setIndexStop(int indexStop) {
-		this.indexStop = indexStop;
-	} 
-	
-	public JTextArea getParam() {
-		return param;
-	}
-
-	public void setParam(JTextArea param) {
-		this.param = param;
-	}
-
 	public void clearOrbit(){
 		indexStart = indexStop;
 		param.setText("");
@@ -121,7 +111,6 @@ public class BuffImage extends JPanel {
 			
 			if (flagPaint){
 				arg0.drawImage(hugeImage,0,0,getWidth(),getHeight(),null);
-				param.setText("");
 				for (int i = indexStart ; i < indexStop - 1; i++){
 					int x0 = PointList.get(i).x;
 					int y0 = PointList.get(i).y;
@@ -129,69 +118,16 @@ public class BuffImage extends JPanel {
 					if ((x0 - PointList.get(i+1).x) < (getWidth() / 10) && (y0 - PointList.get(i+1).y) < (getHeight() / 7) 
 							&&(x0 != mid_x && x0 < getWidth() - 2 && x0 > 1 && y0 > 1 && y0 < getHeight() - 2))
 						arg0.drawLine(PointList.get(i).x, PointList.get(i).y, PointList.get(i + 1).x, PointList.get(i + 1).y); // (x0,y0,x1,y1)
-							param.append("Latitude: " +exParam.get(i).getAllData()[19] + ",	Longitude: " + exParam.get(i).getAllData()[20] + "\n");
-				}	
+						if(indexSatStart < indexSatStop)
+							arg0.drawImage(satelliteImg, PointList.get(indexSatStart).x, PointList.get(indexSatStart).y, satelliteImg.getWidth(), satelliteImg.getHeight(), null);
+
+				}		
 			}
 			else{
 				arg0.drawImage(hugeImage,0,0,getWidth(),getHeight(),null);
 				repaint();
 			}
 	}
-	
-	public void initAllParam() throws FileNotFoundException{
-		x_pix_size = (float)getWidth() / 360;
-		y_pix_size = (float)getHeight() / 180;
-		mid_x = getWidth() / 2; 
-		mid_y = getHeight() / 2;
-		R = 255;
-		int col = (R <<16) | (G << 8) | B;
-		Width = getWidth();
-		Height = getHeight();
-	}
-/*	
-	public void paintOrbit1(JTextArea param,Vector<ExcelParameters> exPar) throws NumberFormatException, IOException, InterruptedException{
-		 csvReader = new CSVReader(new FileReader(csvFilename));
-		 param.setFont(new Font("Serif",Font.BOLD,14));
-		String[] row = null;
-		int count = 0;
-		boolean first = false;
-		//TODO add sync on bfImg.getImg() param
-		PointList = new Vector<>();
-		while((row = csvReader.readNext()) != null) {
-			if (first){
-				count++;
-				initAllParam();
-				int x = Math.round(Float.valueOf(row[20]));
-				int y = Math.round(Float.valueOf(row[19]));
-				int x1 = Math.round(mid_x + x_pix_size * x);
-				int y1 = Math.round(mid_y - y_pix_size * y );
-				
-				//TODO add support for less param
-				if (row.length == 22){	//have to be 21 param 
-					exPar.add(new ExcelParameters(Integer.parseInt(row[0]), Float.parseFloat(row[1]), Float.parseFloat(row[2]), Float.parseFloat(row[3]), Float.parseFloat(row[4]), Float.parseFloat(row[5]), Float.parseFloat(row[6]), Float.parseFloat(row[7]), Float.parseFloat(row[8]), Float.parseFloat(row[9]),Float.parseFloat(row[10]), 
-							Float.parseFloat(row[11]), Float.parseFloat(row[12]), Float.parseFloat(row[13]), Float.parseFloat(row[14]), Float.parseFloat(row[15]), Boolean.parseBoolean(row[16]), Float.parseFloat(row[17]), Float.parseFloat(row[18]), Float.parseFloat(row[19]), Float.parseFloat(row[20]),row));
-					
-				}
-				
-				if (x1 != mid_x && x1 < getWidth() - 2 && x1 > 1 && y1 > 1 && y1 < getHeight() - 2)
-					PointList.add(new Point(x1,y1));	
-			   }
-			if (count == 1000){
-				count = 0;
-				Thread.sleep(200);
-				repaint();
-				Thread.sleep(200);
-				param.setText("");
-				for (int i = 0; i < exPar.size(); i++){
-					param.append("Latitude: " +exPar.get(i).getAllData()[19] + ",	Longitude: " + exPar.get(i).getAllData()[20] + "\n");
-				}
-				
-			}
-			first = true;
-		 }
-		Thread.sleep(200);		
-	}
-*/
 	
 	public void StopAndInitOrbit(){
 	flagPaint = false;
@@ -201,8 +137,9 @@ public class BuffImage extends JPanel {
 	repaint();
 	}
 	
+	//private int newStartSatIndex;
 	public void nextPaintOrbit(){
-
+		indexSatStart = indexStop;
 		Boolean flag = true;
 		while(flag) {
 			//for one round of earth
@@ -221,6 +158,29 @@ public class BuffImage extends JPanel {
 			}
 		}
 		repaint();
+		startTimer(indexStop);
+
+	}
+	
+	public void startTimer(int indexSt){
+		indexSatStop = indexSt;
+		param.setText("");
+		drawtimer = new javax.swing.Timer(intervalDrawing, new ActionListener(){
+		    @Override
+		    public void actionPerformed(ActionEvent e){
+		        // do stuff
+		    	System.out.println("hiiiiii i'm hereeee");
+		    	if (indexSatStart < indexSatStop){
+		    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19] + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20] + "\n");
+		    		indexSatStart++;
+		    		repaint();
+		    	}
+		    	else{
+		    		drawtimer.stop();
+		    	}
+		    }
+		});
+		drawtimer.start();
 	}
 	
 	public void startNewPaintThread() throws FileNotFoundException{
@@ -260,12 +220,12 @@ public class BuffImage extends JPanel {
 					System.out.println(exParam.get(indexStop).getLongitude() + "  " + exParam.get(indexStop + 1).getLongitude());
 					indexStop++;
 				}
-
 				repaint();
+				indexSatStart = 0;
+				startTimer(indexStop);
 		  }
 	}
 	
-	//-------------------------------------------------Getters and setters---------------------------------//
 	private int NumOfParam;
 	public void ConversExcel() throws NumberFormatException, IOException{
 		csvReader = new CSVReader(new FileReader(csvFilename));
@@ -292,7 +252,8 @@ public class BuffImage extends JPanel {
 			NumOfParam++;
 		}		
 	}
-	
+
+	//-------------------------------------------------Getters and setters---------------------------------//
 	public BufferedImage getHugeImage() {
 		return hugeImage;
 	}
@@ -427,6 +388,49 @@ public class BuffImage extends JPanel {
 
 	public void setCsvFilename(String csvFilename) {
 		this.csvFilename = csvFilename;
+	}
+	
+	public boolean isFlag() {
+		return flagPaint;
+	}
+
+	public void setFlag(boolean flag) {
+		this.flagPaint = flag;
+	}
+
+	public BufferedImage getImg(){
+		return hugeImage;
+	}
+	public int getIntervalDrawing() {
+		return intervalDrawing;
+	}
+
+	public void setIntervalDrawing(int intervalDrawing) {
+		this.intervalDrawing = intervalDrawing;
+	}
+	
+	public int getIndexStart() {
+		return indexStart;
+	}
+
+	public void setIndexStart(int indexStart) {
+		this.indexStart = indexStart;
+	}
+	
+	public int getIndexStop() {
+		return indexStop;
+	}
+
+	public void setIndexStop(int indexStop) {
+		this.indexStop = indexStop;
+	} 
+	
+	public JTextArea getParam() {
+		return param;
+	}
+
+	public void setParam(JTextArea param) {
+		this.param = param;
 	}
 	
 }
