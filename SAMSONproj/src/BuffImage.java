@@ -118,9 +118,10 @@ public class BuffImage extends JPanel {
 					if ((x0 - PointList.get(i+1).x) < (getWidth() / 10) && (y0 - PointList.get(i+1).y) < (getHeight() / 7) 
 							&&(x0 != mid_x && x0 < getWidth() - 2 && x0 > 1 && y0 > 1 && y0 < getHeight() - 2))
 						arg0.drawLine(PointList.get(i).x, PointList.get(i).y, PointList.get(i + 1).x, PointList.get(i + 1).y); // (x0,y0,x1,y1)
+						System.out.println("line: " + PointList.get(i).x + " " + PointList.get(i).y );
 						if(indexSatStart < indexSatStop)
-							arg0.drawImage(satelliteImg, PointList.get(indexSatStart).x, PointList.get(indexSatStart).y, satelliteImg.getWidth(), satelliteImg.getHeight(), null);
-
+							arg0.drawImage(satelliteImg, PointList.get(indexSatStart).x - (satelliteImg.getWidth() / 2) , PointList.get(indexSatStart).y - (satelliteImg.getHeight() / 2) , satelliteImg.getWidth(), satelliteImg.getHeight(), null);
+							System.out.println("Sat: " + PointList.get(indexSatStart).x + " " + PointList.get(indexSatStart).y );
 				}		
 			}
 			else{
@@ -169,7 +170,7 @@ public class BuffImage extends JPanel {
 		    @Override
 		    public void actionPerformed(ActionEvent e){
 		        // do stuff
-		    	System.out.println("hiiiiii i'm hereeee");
+		    	//System.out.println("hiiiiii i'm hereeee");
 		    	if (indexSatStart < indexSatStop){
 		    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19] + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20] + "\n");
 		    		indexSatStart++;
