@@ -8,11 +8,11 @@ public class ExcelParameters {
 	private float velX, velY, velZ;
 	private float OrbEl_SMA, OrbEl_Eccentricity, OrbEl_Inclination, OrbEl_RAAN, OrbEl_ArgOfPerigee;
 	private float OrbEl_MeanAnomaly, OrbEl_TrueAnomaly;
-	private Boolean Access;
+	private int Access;
 	private float Azimuth, Elevation, Latitude, Longitude;
 	private String[] allData; 
 	
-	public ExcelParameters(int EpochSecTime ,float JD0,float JD1, float posX,float posY,float posZ, float velX, float velY, float velZ,float OrbEl_SMA,float OrbEl_Eccentricity,float OrbEl_Inclination,float OrbEl_RAAN, float OrbEl_ArgOfPerigee, float OrbEl_MeanAnomaly, float OrbEl_TrueAnomaly, Boolean Access, float Azimuth,float Elevation,float Latitude, float Longitude,String[] allData) {
+	public ExcelParameters(int EpochSecTime ,float JD0,float JD1, float posX,float posY,float posZ, float velX, float velY, float velZ,float OrbEl_SMA,float OrbEl_Eccentricity,float OrbEl_Inclination,float OrbEl_RAAN, float OrbEl_ArgOfPerigee, float OrbEl_MeanAnomaly, float OrbEl_TrueAnomaly, int Access, float Azimuth,float Elevation,float Latitude, float Longitude,String[] allData) {
 		// TODO Auto-generated constructor stub
 		this.EpochSecTime = EpochSecTime;
 		this.JD0 = JD0;
@@ -178,11 +178,11 @@ public class ExcelParameters {
 		OrbEl_TrueAnomaly = orbEl_TrueAnomaly;
 	}
 
-	public Boolean getAccess() {
+	public int getAccess() {
 		return Access;
 	}
 
-	public void setAccess(Boolean access) {
+	public void setAccess(int access) {
 		Access = access;
 	}
 

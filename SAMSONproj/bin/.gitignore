@@ -19,3 +19,5 @@
 /MainFrame$nextActionListener.class
 /BuffImage$PaintThread.class
 /MainFrame$ClearOrbitActionListener.class
+/BuffImage$TimerActionListener$PaintThread.class
+/BuffImage$TimerActionListener.class

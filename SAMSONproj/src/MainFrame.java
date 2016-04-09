@@ -182,7 +182,7 @@ public class MainFrame extends JFrame  {
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 			if(flagCSVFile){
-
+				Window2d.getBfImg().puasePaintOrbit();
 				}
 			else{
 				JOptionPane.showMessageDialog(null, "Insert CSV file first!\nEdit -> Open CSV File", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);

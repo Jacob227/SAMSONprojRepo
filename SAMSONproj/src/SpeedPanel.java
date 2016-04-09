@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
 
@@ -26,7 +27,10 @@ public SpeedPanel(int x, int y, int size_x, int size_y) {
 	 PauseButt = new JButton(new ImageIcon("ImagesAndIcons\\pauseIcin.png"));
 	 FastButt = new JButton(new ImageIcon("ImagesAndIcons\\Faster.png"));
 	 clearDataButt = new JButton("Clear Data");
+	 clearDataButt.setFont(new Font("Serif",Font.BOLD,11));
 	 clearOrbitButt = new JButton("Clear Orbit");
+	 clearOrbitButt.setFont(new Font("Serif",Font.BOLD,10));
+	 
 	
 	playButt.setBounds(7, 5, 37, 37);
 	StopButt.setBounds(7, 47, 37, 37);	

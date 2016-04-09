@@ -33,6 +33,8 @@ public class BuffImage extends JPanel {
 	
 	private BufferedImage hugeImage;
 	private BufferedImage satelliteImg;
+	private BufferedImage redIconOnImg;
+	private BufferedImage redIconOffImg;
 	//private JPanel ImagePanel;
 	private JLabel jlb;
 	//private boolean flagStart,flagStop,flagPause,flagNext;
@@ -44,9 +46,12 @@ public class BuffImage extends JPanel {
 	private int indexStart;
 	private javax.swing.Timer drawtimer;
 	private int intervalDrawing;
+	private Boolean flagStartOverOrContinue = false;	//startOver = 0, continu = 1
 
 	private String imageFile = "ImagesAndIcons\\Earth2048x1024.jpg";
 	private String satDir = "ImagesAndIcons\\sat_icon.png";
+	private String redOnDirFile = "ImagesAndIcons\\R-on.png";
+	private String redOffDirFile = "ImagesAndIcons\\R-off.png";
 	
 	private int Width,Height;
 	private int size_Main_frame_x = 900;
@@ -71,15 +76,13 @@ public class BuffImage extends JPanel {
 		super();
 		this.setSize(w, h);	
 		flagPaint = false;
-		//flagStart = false; flagNext = false;
-		//flagPause = false; flagStop = false;
-		File str = new File(imageFile);
-		File str1 = new File(satDir);
-		intervalDrawing = 20;
-		
+		intervalDrawing = 15;
+		drawtimer = new javax.swing.Timer(intervalDrawing, new TimerActionListener());	
 		 try {
-			 hugeImage = ImageIO.read(str);
-			 satelliteImg = ImageIO.read(str1);
+			 hugeImage = ImageIO.read(new File(imageFile));
+			 satelliteImg = ImageIO.read(new File(satDir));
+			 redIconOnImg = ImageIO.read(new File(redOnDirFile));
+			 redIconOffImg = ImageIO.read(new File(redOffDirFile));
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -118,10 +121,16 @@ public class BuffImage extends JPanel {
 					if ((x0 - PointList.get(i+1).x) < (getWidth() / 10) && (y0 - PointList.get(i+1).y) < (getHeight() / 7) 
 							&&(x0 != mid_x && x0 < getWidth() - 2 && x0 > 1 && y0 > 1 && y0 < getHeight() - 2))
 						arg0.drawLine(PointList.get(i).x, PointList.get(i).y, PointList.get(i + 1).x, PointList.get(i + 1).y); // (x0,y0,x1,y1)
-						System.out.println("line: " + PointList.get(i).x + " " + PointList.get(i).y );
+						//System.out.println("line: " + PointList.get(i).x + " " + PointList.get(i).y );
 						if(indexSatStart < indexSatStop)
 							arg0.drawImage(satelliteImg, PointList.get(indexSatStart).x - (satelliteImg.getWidth() / 2) , PointList.get(indexSatStart).y - (satelliteImg.getHeight() / 2) , satelliteImg.getWidth(), satelliteImg.getHeight(), null);
-							System.out.println("Sat: " + PointList.get(indexSatStart).x + " " + PointList.get(indexSatStart).y );
+							if(exParam.get(indexSatStart).getAccess() == 1){
+								arg0.drawImage(redIconOnImg, 5, Height - redIconOnImg.getHeight() - 5,redIconOnImg.getWidth(),redIconOnImg.getHeight(),null);
+							}
+							else{
+								arg0.drawImage(redIconOffImg,5 , Height - redIconOffImg.getHeight() - 5,redIconOffImg.getWidth(),redIconOffImg.getHeight(),null);
+							}
+							//System.out.println("Sat: " + PointList.get(indexSatStart).x + " " + PointList.get(indexSatStart).y );
 				}		
 			}
 			else{
@@ -134,20 +143,28 @@ public class BuffImage extends JPanel {
 	flagPaint = false;
 	indexStart = 0;
 	indexStop = 0;
+	synchronized (drawtimer) {
+		drawtimer.stop();
+	}
 	param.setText("");
+	flagStartOverOrContinue = false;
 	repaint();
 	}
 	
 	//private int newStartSatIndex;
 	public void nextPaintOrbit(){
 		indexSatStart = indexStop;
+		
+		if (drawtimer.isRunning() ){
+			drawtimer.stop();
+		}
 		Boolean flag = true;
 		while(flag) {
 			//for one round of earth
 			if ((indexStop < NumOfParam - 2)){
 				if ((exParam.get(indexStop ).getLongitude() - exParam.get(indexStop + 1).getLongitude()) > Width / 3
 					|| (exParam.get(indexStop).getLatitude() - exParam.get(indexStop + 1).getLatitude()) > Height / 3){
-				System.out.println(exParam.get(indexStop).getLongitude() + "  " + exParam.get(indexStop + 1).getLongitude());
+				//System.out.println(exParam.get(indexStop).getLongitude() + "  " + exParam.get(indexStop + 1).getLongitude());
 				flagPaint = true;
 				flag = false;
 				}
@@ -160,34 +177,49 @@ public class BuffImage extends JPanel {
 		}
 		repaint();
 		startTimer(indexStop);
-
+	}
+	
+	public void puasePaintOrbit(){
+		synchronized(drawtimer){
+		if (drawtimer != null)
+			drawtimer.stop();
+		}
+		flagStartOverOrContinue = true;
 	}
 	
 	public void startTimer(int indexSt){
 		indexSatStop = indexSt;
 		param.setText("");
-		drawtimer = new javax.swing.Timer(intervalDrawing, new ActionListener(){
-		    @Override
-		    public void actionPerformed(ActionEvent e){
-		        // do stuff
-		    	//System.out.println("hiiiiii i'm hereeee");
-		    	if (indexSatStart < indexSatStop){
-		    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19] + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20] + "\n");
-		    		indexSatStart++;
-		    		repaint();
-		    	}
-		    	else{
-		    		drawtimer.stop();
-		    	}
-		    }
-		});
+		drawtimer.setDelay(intervalDrawing);
 		drawtimer.start();
 	}
 	
+	public class TimerActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+	    	//System.out.println("hiiiiii i'm hereeee");
+	    	if (indexSatStart < indexSatStop){
+	    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19] + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20] + "\n");
+	    		indexSatStart++;
+	    		repaint();
+	    	}
+	    	else{
+	    		drawtimer.stop();
+	    	}	
+		}
+	}
+	
 	public void startNewPaintThread() throws FileNotFoundException{
-		initAllParam();
-		paintThr = new PaintThread();
-		paintThr.start();
+		if (flagStartOverOrContinue){
+			drawtimer.start();
+		}
+		else{		
+			initAllParam();
+			paintThr = new PaintThread();
+			paintThr.start();
+		}
 	}
 	//-----------------------------------------Paint Thread-----------------------------------//
 
@@ -214,7 +246,7 @@ public class BuffImage extends JPanel {
 					//for one round of earth
 					if ((indexStop >= NumOfParam) || (exParam.get(indexStop ).getLongitude() - exParam.get(indexStop + 1).getLongitude()) > Width / 3
 							|| (exParam.get(indexStop).getLatitude() - exParam.get(indexStop + 1).getLatitude()) > Height / 3){
-						System.out.println(exParam.get(indexStop).getLongitude() + "  " + exParam.get(indexStop + 1).getLongitude());
+						//System.out.println(exParam.get(indexStop).getLongitude() + "  " + exParam.get(indexStop + 1).getLongitude());
 						flagPaint = true;
 						flag = false;
 					}
@@ -244,14 +276,14 @@ public class BuffImage extends JPanel {
 				
 			if (row.length >= 21){	//have to be 21 param 
 				exParam.add(new ExcelParameters(Integer.parseInt(row[0]), Float.parseFloat(row[1]), Float.parseFloat(row[2]), Float.parseFloat(row[3]), Float.parseFloat(row[4]), Float.parseFloat(row[5]), Float.parseFloat(row[6]), Float.parseFloat(row[7]), Float.parseFloat(row[8]), Float.parseFloat(row[9]),Float.parseFloat(row[10]), 
-						Float.parseFloat(row[11]), Float.parseFloat(row[12]), Float.parseFloat(row[13]), Float.parseFloat(row[14]), Float.parseFloat(row[15]), Boolean.parseBoolean(row[16]), Float.parseFloat(row[17]), Float.parseFloat(row[18]), Float.parseFloat(row[19]), Float.parseFloat(row[20]),row));
+						Float.parseFloat(row[11]), Float.parseFloat(row[12]), Float.parseFloat(row[13]), Float.parseFloat(row[14]), Float.parseFloat(row[15]), Integer.parseInt(row[16]), Float.parseFloat(row[17]), Float.parseFloat(row[18]), Float.parseFloat(row[19]), Float.parseFloat(row[20]),row));
 			}
 			synchronized(PointList){
 				PointList.add(new Point(x1,y1));
 			}
 			}
 			NumOfParam++;
-		}		
+		}
 	}
 
 	//-------------------------------------------------Getters and setters---------------------------------//
