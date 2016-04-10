@@ -58,10 +58,54 @@ public class MenuBarClass extends JMenuBar {
 		
 		JD0 = new JCheckBoxMenuItem("JD0");
 		Parameters.add(JD0);
+		JD0.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(JD0.isSelected()){
+					ExcelParameters.ValidParam[1] = true;
+					System.out.println("EpochSecTime is ON");
+				}
+				else{
+					ExcelParameters.ValidParam[1] = false;
+				}
+			}
+		});
+		
 		JD1 = new JCheckBoxMenuItem("JD1");
 		Parameters.add(JD1);
+		JD1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(JD1.isSelected()){
+					ExcelParameters.ValidParam[2] = true;
+					System.out.println("EpochSecTime is ON");
+				}
+				else{
+					ExcelParameters.ValidParam[2] = false;
+				}
+			}
+		});
 		posX = new JCheckBoxMenuItem("posX");
 		Parameters.add(posX);
+		posX.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(posX.isSelected()){
+					ExcelParameters.ValidParam[3] = true;
+					System.out.println("EpochSecTime is ON");
+				}
+				else{
+					ExcelParameters.ValidParam[3] = false;
+				}
+			}
+		});
+		
 		posY = new JCheckBoxMenuItem("posY");
 		Parameters.add(posY);
 		posZ = new JCheckBoxMenuItem("posZ");
