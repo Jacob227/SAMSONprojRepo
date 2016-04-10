@@ -83,6 +83,10 @@ public class BuffImage extends JPanel {
 			 satelliteImg = ImageIO.read(new File(satDir));
 			 redIconOnImg = ImageIO.read(new File(redOnDirFile));
 			 redIconOffImg = ImageIO.read(new File(redOffDirFile));
+			 for(int i=0;i<21;i++)
+			 {
+				 ExcelParameters.ValidParam[i]=false;
+			 }
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -201,7 +205,14 @@ public class BuffImage extends JPanel {
 			// TODO Auto-generated method stub
 	    	//System.out.println("hiiiiii i'm hereeee");
 	    	if (indexSatStart < indexSatStop){
-	    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19] + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20] + "\n");
+
+	    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19].trim() + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20]+"," );
+	    		if(ExcelParameters.ValidParam[0]==true)
+	    		{
+	    			param.append("  EpochSecTime: " +exParam.get(indexSatStart).getAllData()[0].trim()+" ,\n");
+	    		}
+	    		
+	    		
 	    		indexSatStart++;
 	    		repaint();
 	    	}

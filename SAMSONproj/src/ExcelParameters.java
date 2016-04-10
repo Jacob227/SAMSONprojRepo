@@ -12,6 +12,10 @@ public class ExcelParameters {
 	private float Azimuth, Elevation, Latitude, Longitude;
 	private String[] allData; 
 	
+	
+	static Boolean[] ValidParam = new Boolean[21]; 
+	
+	
 	public ExcelParameters(int EpochSecTime ,float JD0,float JD1, float posX,float posY,float posZ, float velX, float velY, float velZ,float OrbEl_SMA,float OrbEl_Eccentricity,float OrbEl_Inclination,float OrbEl_RAAN, float OrbEl_ArgOfPerigee, float OrbEl_MeanAnomaly, float OrbEl_TrueAnomaly, int Access, float Azimuth,float Elevation,float Latitude, float Longitude,String[] allData) {
 		// TODO Auto-generated constructor stub
 		this.EpochSecTime = EpochSecTime;
@@ -38,6 +42,8 @@ public class ExcelParameters {
 		
 		this.allData = new String[allData.length];
 		this.allData = allData;
+		
+		
 		
 	}
 	

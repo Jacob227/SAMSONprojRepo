@@ -71,6 +71,9 @@ public class MainFrame extends JFrame  {
 		mb.addActionlistenerOpenCSVFile(new addCSVFileActionListener());
 		mb.addActionlistenerOpen2d(new ActionlistenerOpen2d() );
 		mb.addActionlistenerExit(new ActionlistenerExit());
+
+		
+		
 		
 		desktop = new JDesktopPane();
 		Window2d = new Windows2DInternalFrame(size_internal_Main_frame_x, size_internal_Main_frame_y);
