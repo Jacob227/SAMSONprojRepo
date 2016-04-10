@@ -84,6 +84,8 @@ public class MainFrame extends JFrame  {
 		toolbar.addSat1CheckBoxActionListener(new Sat1CheckBoxActionListener());
 		toolbar.addSat2CheckBoxActionListener(new Sat2CheckBoxActionListener());
 		toolbar.addSat3CheckBoxActionListener(new Sat3CheckBoxActionListener());
+		toolbar.addForwardActionListener(new ForwardActionListener());
+		toolbar.addBackwardActionListener(new BackwardActionListener());
 		this.getContentPane().add(toolbar, BorderLayout.NORTH);
 		
 		desktop = new JDesktopPane();
@@ -131,6 +133,32 @@ public class MainFrame extends JFrame  {
 			
 		}
 		
+	}
+	
+	public class BackwardActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			if(flagCSVFile){
+					Window2d.getBfImg().setBackwardSat(3);		
+				}
+			else{
+				JOptionPane.showMessageDialog(null, "Insert CSV file first!\nEdit -> Open CSV File", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+	}
+	
+	public class ForwardActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			if(flagCSVFile){
+					Window2d.getBfImg().setForwardSat(3);		
+				}
+			else{
+				JOptionPane.showMessageDialog(null, "Insert CSV file first!\nEdit -> Open CSV File", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
 	}
 	
 	public class ActionlistenerExit implements ActionListener{

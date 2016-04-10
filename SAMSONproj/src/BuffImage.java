@@ -59,7 +59,7 @@ public class BuffImage extends JPanel {
 	private int size_internal_Main_frame_x = size_Main_frame_x - 20;
 	private int size_internal_Main_frame_y = size_Main_frame_y - size_Main_frame_y/3;
 	private Vector<ExcelParameters> exParam;
-	private JTextArea param;
+	private JTextArea param = null;
 	
 	int indexSatStart = 0;
 	int indexSatStop = 0;
@@ -76,7 +76,7 @@ public class BuffImage extends JPanel {
 		super();
 		this.setSize(w, h);	
 		flagPaint = false;
-		intervalDrawing = 15;
+		intervalDrawing = 20;
 		drawtimer = new javax.swing.Timer(intervalDrawing, new TimerActionListener());	
 		 try {
 			 hugeImage = ImageIO.read(new File(imageFile));
@@ -106,9 +106,11 @@ public class BuffImage extends JPanel {
 	}
 	
 	public void clearOrbit(){
-		indexStart = indexStop;
-		param.setText("");
-		repaint();
+		if (param != null){
+			indexStart = indexStop;
+			param.setText("");
+			repaint();
+		}
 	}
 	
 	@Override
@@ -158,6 +160,7 @@ public class BuffImage extends JPanel {
 	//private int newStartSatIndex;
 	public void nextPaintOrbit(){
 		indexSatStart = indexStop;
+		indexStart = indexStop;
 		
 		if (drawtimer.isRunning() ){
 			drawtimer.stop();
@@ -183,6 +186,20 @@ public class BuffImage extends JPanel {
 		startTimer(indexStop);
 	}
 	
+	public void setForwardSat(int addForward){
+		if ((intervalDrawing - addForward) > 4){
+			intervalDrawing = intervalDrawing - addForward;
+			drawtimer.setDelay(intervalDrawing);
+		}
+	}
+	
+	public void setBackwardSat(int addBackward){
+		if ((intervalDrawing + addBackward) < 200){
+			intervalDrawing = intervalDrawing + addBackward;
+			drawtimer.setDelay(intervalDrawing);
+		}
+	}
+	
 	public void puasePaintOrbit(){
 		synchronized(drawtimer){
 		if (drawtimer != null)
@@ -194,7 +211,7 @@ public class BuffImage extends JPanel {
 	public void startTimer(int indexSt){
 		indexSatStop = indexSt;
 		param.setText("");
-		drawtimer.setDelay(intervalDrawing);
+			drawtimer.setDelay(intervalDrawing);	
 		drawtimer.start();
 	}
 	
@@ -217,6 +234,7 @@ public class BuffImage extends JPanel {
 	    	}
 	    	else{
 	    		drawtimer.stop();
+	    		flagStartOverOrContinue = false;
 	    	}	
 		}
 	}

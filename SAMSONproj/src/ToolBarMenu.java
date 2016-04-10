@@ -18,6 +18,7 @@ public class ToolBarMenu extends JToolBar {
 	private JButton clearDataButt;
 	private JButton clearOrbitButt;
 	private JButton Forward;
+	private JButton Backward;
 	
 	private JCheckBox sat1CheckBox;
 	private JCheckBox sat2CheckBox;
@@ -30,7 +31,9 @@ public class ToolBarMenu extends JToolBar {
 		 StopButt = new JButton(new ImageIcon("ImagesAndIcons\\StopIcon.png"));
 		 PauseButt = new JButton(new ImageIcon("ImagesAndIcons\\pauseIcin.png"));
 		 FastButt = new JButton(new ImageIcon("ImagesAndIcons\\Faster.png"));
-		// Forward  = new JButton(new ImageIcon("ImagesAndIcons\\Faster.png"))
+		 Forward  = new JButton(new ImageIcon("ImagesAndIcons\\forwardIcon.png"));
+		 Backward = new JButton(new ImageIcon("ImagesAndIcons\\backwardIcon.png"));
+		 
 		 clearDataButt = new JButton("Clear Data");
 		 clearDataButt.setFont(new Font("Serif",Font.BOLD,11));
 		 clearOrbitButt = new JButton("Clear Orbit");
@@ -44,7 +47,8 @@ public class ToolBarMenu extends JToolBar {
 		  sat3CheckBox.setFont(new Font("Serif",Font.BOLD,12));
 		  
 		  sat1CheckBox.setSelected(true);
-
+		  Backward.setSize(25,25);
+		  Forward.setSize(25,25);
 		playButt.setSize( 25, 25);
 		StopButt.setSize( 25, 25);	
 		PauseButt.setSize( 28, 28);
@@ -60,8 +64,10 @@ public class ToolBarMenu extends JToolBar {
 		this.setBackground(Color.lightGray);
 		this.setBorder(blackline);
 		
+		this.add(Backward);
 		this.add(playButt);
 		this.add(FastButt);
+		this.add(Forward);
 		this.add(PauseButt);
 		this.add(StopButt);	
 		this.addSeparator();
@@ -82,6 +88,14 @@ public class ToolBarMenu extends JToolBar {
 	}
 	public void addSat3CheckBoxActionListener(ActionListener al){
 		sat3CheckBox.addActionListener(al);
+	}
+	
+	public void addForwardActionListener(ActionListener al){
+		Forward.addActionListener(al);
+	}
+	
+	public void addBackwardActionListener(ActionListener al){
+		Backward.addActionListener(al);
 	}
 	
 	public void addClearOrbitActionListener(ActionListener al){
