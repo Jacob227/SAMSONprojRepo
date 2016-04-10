@@ -23,6 +23,7 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -35,6 +36,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
@@ -50,11 +52,9 @@ public class MainFrame extends JFrame  {
 	private int size_Main_frame_x = 900;
 	private int size_Main_frame_y = 650;
 	private int size_internal_Main_frame_x = size_Main_frame_x - 20;
-	private int size_internal_Main_frame_y = size_Main_frame_y - size_Main_frame_y/3;
+	private int size_internal_Main_frame_y = size_Main_frame_y - size_Main_frame_y/2 + 60;
 	private int size_internal_Param_frame_x = size_internal_Main_frame_x;
-	private int size_internal_Param_frame_y = size_Main_frame_y - size_internal_Main_frame_y - 65;
-	private int sizeOfPanelPlay_X = 100;
-	private int sizeOfPanelPlay_Y = size_internal_Param_frame_y - 35;
+	private int size_internal_Param_frame_y = size_Main_frame_y - size_internal_Main_frame_y - 98;
 	private File selectedCSVFile = null;
 	private Boolean flagCSVFile = false;
 	private ArrayList<String> csvFile;
@@ -62,7 +62,6 @@ public class MainFrame extends JFrame  {
 	private MenuBarClass mb;
 	private ParametersFrame paramFr;
 	private Windows2DInternalFrame Window2d;
-	private SpeedPanel speedPan;
 	private JFileChooser fileChooser;
 	
 	public MainFrame() throws InterruptedException {
@@ -72,23 +71,23 @@ public class MainFrame extends JFrame  {
 		mb.addActionlistenerOpen2d(new ActionlistenerOpen2d() );
 		mb.addActionlistenerExit(new ActionlistenerExit());
 		
+		ToolBarMenu toolbar = new ToolBarMenu();
+		toolbar.setRollover(true);
+		toolbar.addPlayActionListener(new RunActionListener());
+		toolbar.addStopActionListener(new stopActionListener());
+		toolbar.addPauseActionListener(new pauseActionListener());
+		toolbar.addNextActionListener(new nextActionListener());
+		toolbar.addClearActionListener(new ClearActionListener());
+		toolbar.addClearOrbitActionListener(new ClearOrbitActionListener());
+		this.getContentPane().add(toolbar, BorderLayout.NORTH);
+		
 		desktop = new JDesktopPane();
 		Window2d = new Windows2DInternalFrame(size_internal_Main_frame_x, size_internal_Main_frame_y);
 		
 		desktop.add(Window2d);
-		paramFr = new ParametersFrame(sizeOfPanelPlay_X, size_internal_Main_frame_y + 1, size_internal_Param_frame_x - sizeOfPanelPlay_X, size_internal_Param_frame_y);
+		paramFr = new ParametersFrame(0, size_internal_Main_frame_y + 1, size_internal_Param_frame_x , size_internal_Param_frame_y);
 		desktop.add(paramFr);
-		
-		speedPan = new SpeedPanel(0, size_internal_Main_frame_y +1, sizeOfPanelPlay_X, sizeOfPanelPlay_Y + 35);
-		speedPan.addPlayActionListener(new RunActionListener());
-		speedPan.addStopActionListener(new stopActionListener());
-		speedPan.addPauseActionListener(new pauseActionListener());
-		speedPan.addNextActionListener(new nextActionListener());
-		speedPan.addClearActionListener(new ClearActionListener());
-		speedPan.addClearOrbitActionListener(new ClearOrbitActionListener());
-		speedPan.setVisible(true);
-		
-		this.getContentPane().add(speedPan);		
+				
 		validate();
 		this.setJMenuBar(mb);
 		this.setBounds(300, 70, size_Main_frame_x, size_Main_frame_y); 
