@@ -47,6 +47,7 @@ public class BuffImage extends JPanel {
 	private javax.swing.Timer drawtimer;
 	private int intervalDrawing;
 	private Boolean flagStartOverOrContinue = false;	//startOver = 0, continu = 1
+	private Boolean flagPrevOrbits;
 
 	private String imageFile = "ImagesAndIcons\\Earth2048x1024.jpg";
 	private String satDir = "ImagesAndIcons\\sat_icon.png";
@@ -77,6 +78,7 @@ public class BuffImage extends JPanel {
 		this.setSize(w, h);	
 		flagPaint = false;
 		intervalDrawing = 20;
+		flagPrevOrbits = false;
 		drawtimer = new javax.swing.Timer(intervalDrawing, new TimerActionListener());	
 		 try {
 			 hugeImage = ImageIO.read(new File(imageFile));
@@ -105,9 +107,19 @@ public class BuffImage extends JPanel {
 		Height = getHeight();
 	}
 	
+	public void prevOrbits(){
+		if (param != null){
+		indexStart = 0;
+		param.setText("");
+		flagPrevOrbits = true;
+		repaint();
+		}
+	}
+	
 	public void clearOrbit(){
 		if (param != null){
 			indexStart = indexStop;
+			flagPrevOrbits = false;
 			param.setText("");
 			repaint();
 		}
@@ -159,8 +171,10 @@ public class BuffImage extends JPanel {
 	
 	//private int newStartSatIndex;
 	public void nextPaintOrbit(){
+		
 		indexSatStart = indexStop;
-		indexStart = indexStop;
+		if (!flagPrevOrbits)
+			indexStart = indexStop;
 		
 		if (drawtimer.isRunning() ){
 			drawtimer.stop();
