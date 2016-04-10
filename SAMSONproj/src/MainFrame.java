@@ -80,7 +80,7 @@ public class MainFrame extends JFrame  {
 		toolbar.addPauseActionListener(new pauseActionListener());
 		toolbar.addNextActionListener(new nextActionListener());
 		toolbar.addClearActionListener(new ClearActionListener());
-		toolbar.addClearOrbitActionListener(new ClearOrbitActionListener());
+		toolbar.addallOrbitCheckBoxActionListener(new allOrbitCheckBoxActionListener());
 		toolbar.addSat1CheckBoxActionListener(new Sat1CheckBoxActionListener());
 		toolbar.addSat2CheckBoxActionListener(new Sat2CheckBoxActionListener());
 		toolbar.addSat3CheckBoxActionListener(new Sat3CheckBoxActionListener());
@@ -103,6 +103,21 @@ public class MainFrame extends JFrame  {
 		this.setVisible(true);
 		validate();
 
+	}
+	
+	
+	public class allOrbitCheckBoxActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			if(toolbar.getAllOrbitCheckBox().isSelected())
+				Window2d.getBfImg().prevOrbits();
+			else{
+				Window2d.getBfImg().clearOrbit();
+			}
+		}
+		
 	}
 	
 	public class Sat1CheckBoxActionListener implements ActionListener{
@@ -208,26 +223,38 @@ public class MainFrame extends JFrame  {
 			// TODO Auto-generated method stub
 			if(flagCSVFile){
 				try {
-					if (toolbar.getSat1CheckBox().isSelected())	//satellite Alpha selected
-						Window2d.getBfImg().startNewPaintThread(); //create a new thread
-					
-					if (toolbar.getSat2CheckBox().isSelected())	//satellite Beta selected
-					{
-						
-					}
-					if (toolbar.getSat3CheckBox().isSelected())	//satellite Gamma selected
-					{
-						
-					}
-				} catch (NumberFormatException | IOException e1) {
+					initAllcheckBoxes();
+				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					e.printStackTrace();
 				}
 				}
 			else{
 				JOptionPane.showMessageDialog(null, "Insert CSV file first!\nEdit -> Open CSV File", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
 			}
-		}	
+		}
+		
+		public void initAllcheckBoxes() throws FileNotFoundException{
+			
+			if(toolbar.getAllOrbitCheckBox().isSelected())
+				Window2d.getBfImg().prevOrbits();
+			
+			else{
+				Window2d.getBfImg().clearOrbit();
+			}
+			
+			if (toolbar.getSat1CheckBox().isSelected())	//satellite Alpha selected
+				Window2d.getBfImg().startNewPaintThread(); //create a new thread
+			
+			if (toolbar.getSat2CheckBox().isSelected())	//satellite Beta selected
+			{
+				
+			}
+			if (toolbar.getSat3CheckBox().isSelected())	//satellite Gamma selected
+			{
+				
+			}
+		}
 	}
 	
 	public class stopActionListener implements ActionListener{
