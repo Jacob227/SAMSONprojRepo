@@ -14,7 +14,8 @@ public class MenuBarClass extends JMenuBar {
 	private JMenuItem Open2d;
 	
 	
-	  
+	  private int ddd;
+	  private int rrr;
 	private JCheckBoxMenuItem EpochSecTime;
 	private JCheckBoxMenuItem JD0;
 	private JCheckBoxMenuItem JD1;
