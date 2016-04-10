@@ -18,6 +18,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -63,6 +64,7 @@ public class MainFrame extends JFrame  {
 	private ParametersFrame paramFr;
 	private Windows2DInternalFrame Window2d;
 	private JFileChooser fileChooser;
+	private ToolBarMenu toolbar;
 	
 	public MainFrame() throws InterruptedException {
 		// TODO Auto-generated constructor stub	
@@ -70,11 +72,8 @@ public class MainFrame extends JFrame  {
 		mb.addActionlistenerOpenCSVFile(new addCSVFileActionListener());
 		mb.addActionlistenerOpen2d(new ActionlistenerOpen2d() );
 		mb.addActionlistenerExit(new ActionlistenerExit());
-
-		
-		
-		
-		ToolBarMenu toolbar = new ToolBarMenu();
+	
+		toolbar = new ToolBarMenu();
 		toolbar.setRollover(true);
 		toolbar.addPlayActionListener(new RunActionListener());
 		toolbar.addStopActionListener(new stopActionListener());
@@ -82,6 +81,9 @@ public class MainFrame extends JFrame  {
 		toolbar.addNextActionListener(new nextActionListener());
 		toolbar.addClearActionListener(new ClearActionListener());
 		toolbar.addClearOrbitActionListener(new ClearOrbitActionListener());
+		toolbar.addSat1CheckBoxActionListener(new Sat1CheckBoxActionListener());
+		toolbar.addSat2CheckBoxActionListener(new Sat2CheckBoxActionListener());
+		toolbar.addSat3CheckBoxActionListener(new Sat3CheckBoxActionListener());
 		this.getContentPane().add(toolbar, BorderLayout.NORTH);
 		
 		desktop = new JDesktopPane();
@@ -99,6 +101,36 @@ public class MainFrame extends JFrame  {
 		this.setVisible(true);
 		validate();
 
+	}
+	
+	public class Sat1CheckBoxActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	public class Sat2CheckBoxActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	public class Sat3CheckBoxActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 	
 	public class ActionlistenerExit implements ActionListener{
@@ -148,9 +180,17 @@ public class MainFrame extends JFrame  {
 			// TODO Auto-generated method stub
 			if(flagCSVFile){
 				try {
-					//Window2d.getBfImg().initAllParam();
-					Window2d.getBfImg().startNewPaintThread(); //create a new thread
-					//Window2d.getBfImg().paintOrbit1(paramFr.getParamText(),exParam);
+					if (toolbar.getSat1CheckBox().isSelected())	//satellite Alpha selected
+						Window2d.getBfImg().startNewPaintThread(); //create a new thread
+					
+					if (toolbar.getSat2CheckBox().isSelected())	//satellite Beta selected
+					{
+						
+					}
+					if (toolbar.getSat3CheckBox().isSelected())	//satellite Gamma selected
+					{
+						
+					}
 				} catch (NumberFormatException | IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

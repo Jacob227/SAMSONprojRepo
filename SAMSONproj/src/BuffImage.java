@@ -209,8 +209,9 @@ public class BuffImage extends JPanel {
 	    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19].trim() + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20]+"," );
 	    		if(ExcelParameters.ValidParam[0]==true)
 	    		{
-	    			param.append("  EpochSecTime: " +exParam.get(indexSatStart).getAllData()[0].trim()+" ,\n");
+	    			param.append("  EpochSecTime: " +exParam.get(indexSatStart).getAllData()[0].trim()+" ,");
 	    		}
+	    		param.append("\n");
 	    		indexSatStart++;
 	    		repaint();
 	    	}
