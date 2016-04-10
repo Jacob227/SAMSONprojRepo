@@ -211,8 +211,6 @@ public class BuffImage extends JPanel {
 	    		{
 	    			param.append("  EpochSecTime: " +exParam.get(indexSatStart).getAllData()[0].trim()+" ,\n");
 	    		}
-	    		
-	    		
 	    		indexSatStart++;
 	    		repaint();
 	    	}
