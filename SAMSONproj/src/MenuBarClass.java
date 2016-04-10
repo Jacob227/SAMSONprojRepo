@@ -12,10 +12,10 @@ public class MenuBarClass extends JMenuBar {
 	private JMenu edit;
 	private JMenu Parameters;
 	private JMenuItem Open2d;
-	  private int add = 0;
-	  private int add2 = 0;//fsdfsdfsdf
+	
+	
 	  private int ddd;
-	  
+	  private int rrr;
 	private JCheckBoxMenuItem EpochSecTime;
 	private JCheckBoxMenuItem JD0;
 	private JCheckBoxMenuItem JD1;
