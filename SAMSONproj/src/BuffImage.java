@@ -236,13 +236,25 @@ public class BuffImage extends JPanel {
 			// TODO Auto-generated method stub
 	    	//System.out.println("hiiiiii i'm hereeee");
 	    	if (indexSatStart < indexSatStop){
+	    		param.setFont(new Font("Sarif",Font.BOLD,12));
+	    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19].trim() + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20]+",  " );
+	    		int cnt = 0;
+	    		for(int k=0;k<19;k++){
+	    			if(ExcelParameters.ValidParam[k]==true){
+	    				cnt++;
+	    				param.append(ExcelParameters.NameParams[k].trim()+": " +exParam.get(indexSatStart).getAllData()[k].trim()+",  ");			
+	    				if(cnt%4 == 0){
+	    					param.append("\n");
 
-	    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19].trim() + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20]+"," );
-	    		if(ExcelParameters.ValidParam[0]==true)
-	    		{
-	    			param.append("  EpochSecTime: " +exParam.get(indexSatStart).getAllData()[0].trim()+" ,");
+	    				}
+	    			}
 	    		}
-	    		param.append("\n");
+				if (cnt>=4)
+				{
+					param.append("\n----------------------------------------------------------------------------------\n");
+				}
+				else param.append("\n");
+
 	    		indexSatStart++;
 	    		repaint();
 	    	}
