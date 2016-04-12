@@ -56,7 +56,7 @@ public class MainFrame extends JFrame  {
 	private int size_internal_Main_frame_y = size_Main_frame_y - size_Main_frame_y/2 + 60;
 	private int size_internal_Param_frame_x = size_internal_Main_frame_x;
 	private int size_internal_Param_frame_y = size_Main_frame_y - size_internal_Main_frame_y - 98;
-	private File selectedCSVFile = null;
+	private File[] selectedCSVFile;
 	private Boolean flagCSVFile = false;
 	private ArrayList<String> csvFile;
 	
@@ -72,7 +72,7 @@ public class MainFrame extends JFrame  {
 		mb.addActionlistenerOpenCSVFile(new addCSVFileActionListener());
 		mb.addActionlistenerOpen2d(new ActionlistenerOpen2d() );
 		mb.addActionlistenerExit(new ActionlistenerExit());
-	
+
 		toolbar = new ToolBarMenu();
 		toolbar.setRollover(true);
 		toolbar.addPlayActionListener(new RunActionListener());
@@ -110,7 +110,7 @@ public class MainFrame extends JFrame  {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
+			//TODO
 			if(toolbar.getAllOrbitCheckBox().isSelected())
 				Window2d.getBfImg().prevOrbits();
 			else{
@@ -124,8 +124,15 @@ public class MainFrame extends JFrame  {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
+			if(Window2d.getBfImg().getActiveSatellite(0) != null){
+				if(toolbar.getSat1CheckBox().isSelected())			
+					Window2d.getBfImg().setActiveSatellite(0);
+				else
+					Window2d.getBfImg().setUnActiveSatellite(0);
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "You must insert CSV file for this Satellite.", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 		
 	}
@@ -135,7 +142,15 @@ public class MainFrame extends JFrame  {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			
+			if(Window2d.getBfImg().getActiveSatellite(1) != null){
+				if(toolbar.getSat2CheckBox().isSelected())
+					Window2d.getBfImg().setActiveSatellite(1);
+				else
+					Window2d.getBfImg().setUnActiveSatellite(1);
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "You must insert CSV file for this Satellite.", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 		
 	}
@@ -145,7 +160,15 @@ public class MainFrame extends JFrame  {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			
+			if(Window2d.getBfImg().getActiveSatellite(2) != null){
+				if(toolbar.getSat3CheckBox().isSelected())
+					Window2d.getBfImg().setActiveSatellite(2);
+				else
+					Window2d.getBfImg().setUnActiveSatellite(2);
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "You must insert CSV file for this Satellite.", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 		
 	}
@@ -235,24 +258,21 @@ public class MainFrame extends JFrame  {
 		}
 		
 		public void initAllcheckBoxes() throws FileNotFoundException{
+			if(!Window2d.getBfImg().getflagStartOverOrContinue())
+			{
+				if(toolbar.getAllOrbitCheckBox().isSelected())	//TODO
+					Window2d.getBfImg().prevOrbits();
 			
-			if(toolbar.getAllOrbitCheckBox().isSelected())
-				Window2d.getBfImg().prevOrbits();
+				else{
+					Window2d.getBfImg().clearOrbit();
+				}
+			}
 			
+			if (toolbar.getSat1CheckBox().isSelected() || toolbar.getSat2CheckBox().isSelected()
+					|| toolbar.getSat3CheckBox().isSelected())	//satellite Alpha selected
+				Window2d.getBfImg().startNewSimulation(); 
 			else{
-				Window2d.getBfImg().clearOrbit();
-			}
-			
-			if (toolbar.getSat1CheckBox().isSelected())	//satellite Alpha selected
-				Window2d.getBfImg().startNewPaintThread(); //create a new thread
-			
-			if (toolbar.getSat2CheckBox().isSelected())	//satellite Beta selected
-			{
-				
-			}
-			if (toolbar.getSat3CheckBox().isSelected())	//satellite Gamma selected
-			{
-				
+				JOptionPane.showMessageDialog(null, "You have to choose a satellite before starting simulation", "InfoBox: " + "Error", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 	}
@@ -308,30 +328,68 @@ public class MainFrame extends JFrame  {
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			fileChooser = new JFileChooser("Open CSV File");
+			fileChooser.setMultiSelectionEnabled(true);
 			fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
 			int result = fileChooser.showOpenDialog(getParent());
 			if (result == JFileChooser.APPROVE_OPTION) {
-				selectedCSVFile = fileChooser.getSelectedFile();
-				 System.out.println("Selected file: " + selectedCSVFile.getAbsolutePath());
-				if (selectedCSVFile.getAbsolutePath().contains(".csv") || selectedCSVFile.getAbsolutePath().contains(".CSV")){
-					Window2d.getBfImg().setCsvFilename(selectedCSVFile.getAbsolutePath());
-					try {
-						Window2d.getBfImg().ConversExcel();
-						Window2d.getBfImg().setParam(paramFr.getParamText());
-					} catch (NumberFormatException | IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+				selectedCSVFile = fileChooser.getSelectedFiles();
+				 System.out.println("Selected file: " + selectedCSVFile[0].getAbsolutePath());
+				 for (int i = 0; i < selectedCSVFile.length; i++){
+					 String tempLowCase = selectedCSVFile[i].getAbsolutePath().toLowerCase();  //only for checking without any combination
+					 if (tempLowCase.contains(".csv"))
+					 {	
+						 
+						if (tempLowCase.contains("satalpha")) {
+							System.out.println("Satellite: " +tempLowCase );							
+							try {
+								Window2d.getBfImg().ConversExcel(selectedCSVFile[i].getAbsolutePath(),0,"ImagesAndIcons\\sat_icon_Alpha.png","ImagesAndIcons\\R-on.png","ImagesAndIcons\\R-off.png",paramFr.getParamText(),"Alpha");
+								if(toolbar.getSat1CheckBox().isSelected())
+									Window2d.getBfImg().setActiveSatellite(0);
+								
+							} catch (NumberFormatException | IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+
+						}
+						
+						if (tempLowCase.contains("satbeta")) {
+							System.out.println("Satellite: " +tempLowCase );							
+							try {
+								Window2d.getBfImg().ConversExcel(selectedCSVFile[i].getAbsolutePath(),1,"ImagesAndIcons\\sat_icon_Beta.png","ImagesAndIcons\\yellowOn.png","ImagesAndIcons\\yellowOff.png",paramFr.getParamText(),"Beta");
+								if(toolbar.getSat2CheckBox().isSelected())
+									Window2d.getBfImg().setActiveSatellite(1);
+							} catch (NumberFormatException | IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							
+						}
+						
+						if (tempLowCase.contains("satgamma")) {
+							System.out.println("Satellite: " +tempLowCase );
+							try {
+								Window2d.getBfImg().ConversExcel(selectedCSVFile[i].getAbsolutePath(),2,"ImagesAndIcons\\sat_icon_Gamma.png","ImagesAndIcons\\greenOn.png","ImagesAndIcons\\greenOff.png",paramFr.getParamText(),"Gamma");
+								if(toolbar.getSat3CheckBox().isSelected())
+									Window2d.getBfImg().setActiveSatellite(2);
+							} catch (NumberFormatException | IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							
+						}
+					 }
+
+					 else{
+						flagCSVFile = false;
+						JOptionPane.showMessageDialog(null, "You must choose only CSV File!", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
+						}
+				 }
+				 
 					flagCSVFile = true;
 				}
-				else{
-					flagCSVFile = false;
-					JOptionPane.showMessageDialog(null, "You must choose only CSV File!", "InfoBox: " + "File Error", JOptionPane.INFORMATION_MESSAGE);
-				}
 
-			}
+			}		
 		}
-		
-	}
 	
 }

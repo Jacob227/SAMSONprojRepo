@@ -12,7 +12,7 @@ public class ExcelParameters {
 	private float Azimuth, Elevation, Latitude, Longitude;
 	private String[] allData; 
 	
-	
+	static String[] NameParams = {"EpochSecTime","JD0","JD1","posX","posY","posZ","velX","velY","velZ","OrbEl_SMA","OrbEl_Eccentricity", "OrbEl_Inclination", "OrbEl_RAAN", "OrbEl_ArgOfPerigee", "OrbEl_MeanAnomaly", "OrbEl_TrueAnomaly","Access", "Azimuth", "Elevation","Latitude","Longitude"};
 	static Boolean[] ValidParam = new Boolean[21]; 
 	
 	

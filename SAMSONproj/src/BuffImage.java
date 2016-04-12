@@ -1,5 +1,7 @@
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -30,98 +32,51 @@ import com.opencsv.CSVReader;
 import java.awt.image.*;
 
 public class BuffImage extends JPanel {
-	
+	//common
 	private BufferedImage hugeImage;
-	private BufferedImage satelliteImg;
-	private BufferedImage redIconOnImg;
-	private BufferedImage redIconOffImg;
-	//private JPanel ImagePanel;
-	private JLabel jlb;
-	//private boolean flagStart,flagStop,flagPause,flagNext;
 	private boolean flagPaint;
-	private static Vector<Point> PointList = null;
 	private CSVReader csvReader;
-	private PaintThread paintThr;
-	private int indexStop;
-	private int indexStart;
-	private javax.swing.Timer drawtimer;
+	private javax.swing.Timer[] drawtimerSat;
+	private TimerActionListener[] timerActionListener;
 	private int intervalDrawing;
 	private Boolean flagStartOverOrContinue = false;	//startOver = 0, continu = 1
 	private Boolean flagPrevOrbits;
-
 	private String imageFile = "ImagesAndIcons\\Earth2048x1024.jpg";
-	private String satDir = "ImagesAndIcons\\sat_icon.png";
-	private String redOnDirFile = "ImagesAndIcons\\R-on.png";
-	private String redOffDirFile = "ImagesAndIcons\\R-off.png";
-	
-	private int Width,Height;
 	private int size_Main_frame_x = 900;
 	private int size_Main_frame_y = 600;
 	private int size_internal_Main_frame_x = size_Main_frame_x - 20;
-	private int size_internal_Main_frame_y = size_Main_frame_y - size_Main_frame_y/3;
-	private Vector<ExcelParameters> exParam;
-	private JTextArea param = null;
-	
-	int indexSatStart = 0;
-	int indexSatStop = 0;
-	
+	private int size_internal_Main_frame_y = size_Main_frame_y - size_Main_frame_y/3;	
 	private int R,G,B = 0;
 	private float x_pix_size = 0,y_pix_size = 0;
 	private int mid_x = 0;
 	private int mid_y = 0;
-	private String csvFilename= "";
+	private Color[] colArr = {Color.red,Color.yellow,Color.green};
+	
+	private Satellite[] satellites = null;
 
 	
 	public BuffImage(int w, int h) {
 		// TODO Auto-generated constructor stub
 		super();
 		this.setSize(w, h);	
+		satellites = new Satellite[3];
+		timerActionListener = new TimerActionListener[3];
 		flagPaint = false;
 		intervalDrawing = 20;
 		flagPrevOrbits = false;
-		drawtimer = new javax.swing.Timer(intervalDrawing, new TimerActionListener());	
+		drawtimerSat = new javax.swing.Timer[3];	
+		
 		 try {
 			 hugeImage = ImageIO.read(new File(imageFile));
-			 satelliteImg = ImageIO.read(new File(satDir));
-			 redIconOnImg = ImageIO.read(new File(redOnDirFile));
-			 redIconOffImg = ImageIO.read(new File(redOffDirFile));
+
 			 for(int i=0;i<21;i++)
 			 {
-				 ExcelParameters.ValidParam[i]=false;
+				 ExcelParameters.ValidParam[i]=false;	//TODO
 			 }
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	}
-
-	public void initAllParam() throws FileNotFoundException{
-		x_pix_size = (float)getWidth() / 360;
-		y_pix_size = (float)getHeight() / 180;
-		mid_x = getWidth() / 2; 
-		mid_y = getHeight() / 2;
-		R = 255;
-		int col = (R <<16) | (G << 8) | B;
-		Width = getWidth();
-		Height = getHeight();
-	}
-	
-	public void prevOrbits(){
-		if (param != null){
-		indexStart = 0;
-		param.setText("");
-		flagPrevOrbits = true;
-		repaint();
-		}
-	}
-	
-	public void clearOrbit(){
-		if (param != null){
-			indexStart = indexStop;
-			flagPrevOrbits = false;
-			param.setText("");
-			repaint();
 		}
 	}
 	
@@ -131,25 +86,29 @@ public class BuffImage extends JPanel {
 		super.paintComponent(arg0);		
 			
 			if (flagPaint){
+				((Graphics2D) arg0).setStroke(new BasicStroke(2));
 				arg0.drawImage(hugeImage,0,0,getWidth(),getHeight(),null);
-				for (int i = indexStart ; i < indexStop - 1; i++){
-					int x0 = PointList.get(i).x;
-					int y0 = PointList.get(i).y;
-					arg0.setColor(Color.RED);
-					if ((x0 - PointList.get(i+1).x) < (getWidth() / 10) && (y0 - PointList.get(i+1).y) < (getHeight() / 7) 
-							&&(x0 != mid_x && x0 < getWidth() - 2 && x0 > 1 && y0 > 1 && y0 < getHeight() - 2))
-						arg0.drawLine(PointList.get(i).x, PointList.get(i).y, PointList.get(i + 1).x, PointList.get(i + 1).y); // (x0,y0,x1,y1)
-						//System.out.println("line: " + PointList.get(i).x + " " + PointList.get(i).y );
-						if(indexSatStart < indexSatStop)
-							arg0.drawImage(satelliteImg, PointList.get(indexSatStart).x - (satelliteImg.getWidth() / 2) , PointList.get(indexSatStart).y - (satelliteImg.getHeight() / 2) , satelliteImg.getWidth(), satelliteImg.getHeight(), null);
-							if(exParam.get(indexSatStart).getAccess() == 1){
-								arg0.drawImage(redIconOnImg, 5, Height - redIconOnImg.getHeight() - 5,redIconOnImg.getWidth(),redIconOnImg.getHeight(),null);
-							}
-							else{
-								arg0.drawImage(redIconOffImg,5 , Height - redIconOffImg.getHeight() - 5,redIconOffImg.getWidth(),redIconOffImg.getHeight(),null);
-							}
-							//System.out.println("Sat: " + PointList.get(indexSatStart).x + " " + PointList.get(indexSatStart).y );
-				}		
+				for(int j = 0; j < satellites.length ; j++) {
+					if (satellites[j] != null && satellites[j].getFlagActive()){ 
+						arg0.setColor(colArr[j]);
+						for (int i = satellites[j].getIndexStart() ; i < satellites[j].getIndexStop() - 1; i++){
+							int x0 = satellites[j].getPointList().get(i).x;
+							int y0 = satellites[j].getPointList().get(i).y;
+							if ((x0 - satellites[j].getPointList().get(i + 1).x) < (getWidth() / 10) && (y0 - satellites[j].getPointList().get(i + 1).y) < (getHeight() / 7) 
+									&&(x0 != mid_x && x0 < getWidth() - 2 && x0 > 1 && y0 > 1 && y0 < getHeight() - 2))
+								arg0.drawLine(satellites[j].getPointList().get(i).x, satellites[j].getPointList().get(i).y, satellites[j].getPointList().get(i + 1).x, satellites[j].getPointList().get(i + 1).y); // (x0,y0,x1,y1)
+								if(satellites[j].getIndexSatStart() < satellites[j].getIndexSatStop())
+									arg0.drawImage(satellites[j].getSatelliteImg(), satellites[j].getPointList().get(satellites[j].getIndexSatStart()).x - (satellites[j].getSatelliteImg().getWidth() / 2) , satellites[j].getPointList().get(satellites[j].getIndexSatStart()).y - (satellites[j].getSatelliteImg().getHeight() / 2) , satellites[j].getSatelliteImg().getWidth(), satellites[j].getSatelliteImg().getHeight(), null);
+									if(satellites[j].getExParam().get(satellites[j].getIndexSatStart()).getAccess() == 1){
+										arg0.drawImage(satellites[j].getIconOnImg(), satellites[j].getSizeOfIconX(), getHeight() - satellites[j].getIconOnImg().getHeight() - 5,satellites[j].getIconOnImg().getWidth(),satellites[j].getIconOnImg().getHeight(),null);
+									}
+									else{
+										arg0.drawImage(satellites[j].getIconOffImg(),satellites[j].getSizeOfIconX() , getHeight() - satellites[j].getIconOffImg().getHeight() - 5,satellites[j].getIconOffImg().getWidth(),satellites[j].getIconOffImg().getHeight(),null);
+									}
+					
+						}
+					}//inner for	
+				}// big for
 			}
 			else{
 				arg0.drawImage(hugeImage,0,0,getWidth(),getHeight(),null);
@@ -157,159 +116,235 @@ public class BuffImage extends JPanel {
 			}
 	}
 	
+	public void allocateSatellite(int satNum,String satDir,String OnDirFile,String OffDirFile,JTextArea param1,String name) throws IOException{
+			satellites[satNum] = new Satellite(satDir,OnDirFile,OffDirFile,param1,5 + satNum*30,name);
+			timerActionListener[satNum] = new TimerActionListener(satellites[satNum]);
+			drawtimerSat[satNum] = new javax.swing.Timer(intervalDrawing, timerActionListener[satNum]);
+			timerActionListener[satNum].setDrawT(drawtimerSat[satNum]);
+	}
+	
+	public void initAllParam() throws FileNotFoundException{
+		x_pix_size = (float)getWidth() / 360;
+		y_pix_size = (float)getHeight() / 180;
+		mid_x = getWidth() / 2; 
+		mid_y = getHeight() / 2;
+		R = 255;
+		int col = (R <<16) | (G << 8) | B;
+		//Width = getWidth();
+		//Height = getHeight();
+	}
+	
+	public void prevOrbits(){
+		for (int j = 0; j < satellites.length; j++){
+			if (satellites[j] != null && satellites[j].getFlagActive()){
+				if (satellites[j].getParam() != null){
+					satellites[j].setIndexStart(0);
+					satellites[j].getParam().setText("");
+					flagPrevOrbits = true;
+				}
+			}
+		}
+		repaint();
+	}
+	
+	public void clearOrbit(){
+		for (int j = 0; j < satellites.length; j++)
+			if (satellites[j] != null && satellites[j].getFlagActive()){
+				satellites[j].setIndexStart(satellites[j].getIndexStop());
+				flagPrevOrbits = false;
+				satellites[j].getParam().setText("");
+				}
+		repaint();
+	}
+	
 	public void StopAndInitOrbit(){
 	flagPaint = false;
-	indexStart = 0;
-	indexStop = 0;
-	synchronized (drawtimer) {
-		drawtimer.stop();
-	}
-	param.setText("");
+	synchronized (drawtimerSat) {
+		for (int j = 0; j < satellites.length; j++)
+			if (drawtimerSat[j] != null && satellites[j] != null && satellites[j].getFlagActive()) {
+				drawtimerSat[j].stop();
+				satellites[j].setIndexStart(0);
+				satellites[j].setIndexStop(0);;
+				satellites[j].getParam().setText("");
+			}
+		}
 	flagStartOverOrContinue = false;
 	repaint();
 	}
 	
-	//private int newStartSatIndex;
 	public void nextPaintOrbit(){
 		
-		indexSatStart = indexStop;
-		if (!flagPrevOrbits)
-			indexStart = indexStop;
-		
-		if (drawtimer.isRunning() ){
-			drawtimer.stop();
-		}
-		Boolean flag = true;
-		while(flag) {
-			//for one round of earth
-			if ((indexStop < NumOfParam - 2)){
-				if ((exParam.get(indexStop ).getLongitude() - exParam.get(indexStop + 1).getLongitude()) > Width / 3
-					|| (exParam.get(indexStop).getLatitude() - exParam.get(indexStop + 1).getLatitude()) > Height / 3){
-				//System.out.println(exParam.get(indexStop).getLongitude() + "  " + exParam.get(indexStop + 1).getLongitude());
-				flagPaint = true;
-				flag = false;
+		for (int j = 0; j < satellites.length; j++)
+			if (drawtimerSat[j] != null && satellites[j] != null && satellites[j].getFlagActive()) {
+				if (drawtimerSat[j].isRunning() ){
+					drawtimerSat[j].stop();
 				}
-				System.out.println(exParam.get(indexStop).getLongitude() + "  " + exParam.get(indexStop + 1).getLongitude());
-				indexStop++;
+				satellites[j].setIndexSatStart(satellites[j].getIndexStop());
+				
+				if (!flagPrevOrbits)
+					satellites[j].setIndexStart(satellites[j].getIndexStop());
+				Boolean flag = true;
+				while(flag) {
+					//for one round of earth
+					if ((satellites[j].getIndexStop() < satellites[j].getNumOfParam() - 2)){
+						if ((satellites[j].getExParam().get(satellites[j].getIndexStop() ).getLongitude() - satellites[j].getExParam().get(satellites[j].getIndexStop() +1).getLongitude()  > (getWidth() / 3))
+							|| (satellites[j].getExParam().get(satellites[j].getIndexStop()).getLatitude() - satellites[j].getExParam().get(satellites[j].getIndexStop() + 1).getLatitude()) > (getHeight() / 3)){
+					
+						flag = false;
+						}
+						satellites[j].setIndexStop(satellites[j].getIndexStop() + 1);
+					}
+					else{
+						flag = false;
+					}
+				}	
 			}
-			else{
-				flag = false;
-			}
-		}
+				
+		flagPaint = true;
 		repaint();
-		startTimer(indexStop);
+		for(int i = 0; i < satellites.length ; i++)
+			if (satellites[i] != null && satellites[i].getFlagActive())
+				startTimer(i);
 	}
 	
 	public void setForwardSat(int addForward){
 		if ((intervalDrawing - addForward) > 4){
 			intervalDrawing = intervalDrawing - addForward;
-			drawtimer.setDelay(intervalDrawing);
+			for(int i = 0; i < drawtimerSat.length; i++)
+				if (drawtimerSat[i] != null && satellites[i].getFlagActive())
+					drawtimerSat[i].setDelay(intervalDrawing);
 		}
 	}
 	
 	public void setBackwardSat(int addBackward){
-		if ((intervalDrawing + addBackward) < 200){
+		if ((intervalDrawing - addBackward) < 200){
 			intervalDrawing = intervalDrawing + addBackward;
-			drawtimer.setDelay(intervalDrawing);
+			for(int i = 0; i < drawtimerSat.length; i++)
+				if (drawtimerSat[i] != null && satellites[i].getFlagActive())
+					drawtimerSat[i].setDelay(intervalDrawing);
 		}
+
 	}
 	
 	public void puasePaintOrbit(){
-		synchronized(drawtimer){
-		if (drawtimer != null)
-			drawtimer.stop();
-		}
+		synchronized(drawtimerSat){
+			for(int i = 0; i < drawtimerSat.length; i++)
+				if (drawtimerSat[i] != null && satellites[i].getFlagActive())
+					drawtimerSat[i].stop();
+			}
 		flagStartOverOrContinue = true;
 	}
 	
-	public void startTimer(int indexSt){
-		indexSatStop = indexSt;
-		param.setText("");
-			drawtimer.setDelay(intervalDrawing);	
-		drawtimer.start();
+	public Boolean getflagStartOverOrContinue(){
+		return flagStartOverOrContinue;
+	}
+	
+	public void startTimer(int satIndex){
+			satellites[satIndex].setIndexSatStop(satellites[satIndex].getIndexStop()) ;
+			satellites[satIndex].getParam().setText("");
+			drawtimerSat[satIndex].setDelay(intervalDrawing);	
+			drawtimerSat[satIndex].start();
+
 	}
 	
 	public class TimerActionListener implements ActionListener {
+		
+		private Satellite satRef = null;
+		private javax.swing.Timer drawT;
 
+		public TimerActionListener(Satellite satRef) {
+	// TODO Auto-generated constructor stub
+			this.satRef = satRef;
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 	    	//System.out.println("hiiiiii i'm hereeee");
-	    	if (indexSatStart < indexSatStop){
 
-	    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19].trim() + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20]+"," );
-	    		if(ExcelParameters.ValidParam[0]==true)
-	    		{
-	    			param.append("  EpochSecTime: " +exParam.get(indexSatStart).getAllData()[0].trim()+" ,");
+	    	if (satRef.getIndexSatStart() < satRef.getIndexSatStop()){
+
+	    		satRef.getParam().setFont(new Font("Sarif",Font.BOLD,12));
+	    		satRef.getParam().append(satRef.getSatelliteName() + ":  Latitude: " + satRef.getExParam().get(satRef.getIndexSatStart()).getAllData()[19].trim() + ",  Longitude: " + satRef.getExParam().get(satRef.getIndexSatStart()).getAllData()[20]+",  " );
+	    		int cnt = 0;
+	    		for(int k=0;k<19;k++){
+	    			if(ExcelParameters.ValidParam[k]==true){
+	    				cnt++;
+	    				satRef.getParam().append(ExcelParameters.NameParams[k].trim()+": " +satRef.getExParam().get(satRef.getIndexSatStart()).getAllData()[k].trim()+",  ");			
+	    				if(cnt%4 == 0){
+	    					satRef.getParam().append("\n");
+
+	    				}
+	    			}
 	    		}
-	    		param.append("\n");
-	    		indexSatStart++;
+				if (cnt>=4)
+				{
+					satRef.getParam().append("\n----------------------------------------------------------------------------------\n");
+				}
+				else 
+					satRef.getParam().append("\n");
+				
+	    		satRef.setIndexSatStart(satRef.getIndexSatStart() + 1);
 	    		repaint();
 	    	}
 	    	else{
-	    		drawtimer.stop();
+	    		drawT.stop();
 	    		flagStartOverOrContinue = false;
 	    	}	
+	    	
 		}
-	}
-	
-	public void startNewPaintThread() throws FileNotFoundException{
-		if (flagStartOverOrContinue){
-			drawtimer.start();
-		}
-		else{		
-			initAllParam();
-			paintThr = new PaintThread();
-			paintThr.start();
-		}
-	}
-	//-----------------------------------------Paint Thread-----------------------------------//
-
-	public class PaintThread extends Thread {
-			
-		    public PaintThread() {
-			// TODO Auto-generated constructor stub
-		    	indexStop = 0;
-		    	indexStart = 0;
+		
+		public javax.swing.Timer getDrawT() {
+			return drawT;
 		}
 
-			public void run(){
-		       System.out.println("Play Thread running");
-				 try {
-					csvReader = new CSVReader(new FileReader(csvFilename));
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				 param.setFont(new Font("Serif",Font.BOLD,14));
-				flagPaint = false;
-				Boolean flag = true;
-				while(flag) {
-					//for one round of earth
-					if ((indexStop >= NumOfParam) || (exParam.get(indexStop ).getLongitude() - exParam.get(indexStop + 1).getLongitude()) > Width / 3
-							|| (exParam.get(indexStop).getLatitude() - exParam.get(indexStop + 1).getLatitude()) > Height / 3){
-						//System.out.println(exParam.get(indexStop).getLongitude() + "  " + exParam.get(indexStop + 1).getLongitude());
-						flagPaint = true;
-						flag = false;
-					}
-					System.out.println(exParam.get(indexStop).getLongitude() + "  " + exParam.get(indexStop + 1).getLongitude());
-					indexStop++;
-				}
-				repaint();
-				indexSatStart = 0;
-				startTimer(indexStop);
-		  }
+		public void setDrawT(javax.swing.Timer drawT) {
+			this.drawT = drawT;
+		}
 	}
+
 	
-	private int NumOfParam;
-	public void ConversExcel() throws NumberFormatException, IOException{
+	public void startNewSimulation() throws FileNotFoundException{
+		
+		for (int j = 0; j < satellites.length; j++){
+			if (satellites[j] != null && satellites[j].getFlagActive()){
+				if (flagStartOverOrContinue){
+					drawtimerSat[j].start();
+				}
+				else{	 //start new simulation	
+					initAllParam();
+					satellites[j].setIndexStop(0);
+					satellites[j].setIndexStart(0);
+					satellites[j].getParam().setFont(new Font("Serif",Font.BOLD,14));
+				
+					flagPaint = false;
+					Boolean flag = true;
+					while(flag) {
+						//for one round of earth
+						if ((satellites[j].getIndexStop() < satellites[j].getNumOfParam() - 2))
+							if ((satellites[j].getExParam().get(satellites[j].getIndexStop() ).getLongitude() - satellites[j].getExParam().get(satellites[j].getIndexStop() +1).getLongitude()  > (getWidth() / 3))
+									|| (satellites[j].getExParam().get(satellites[j].getIndexStop()).getLatitude() - satellites[j].getExParam().get(satellites[j].getIndexStop() + 1).getLatitude()) > (getHeight() / 3)){
+								flag = false;
+							}
+						satellites[j].setIndexStop(satellites[j].getIndexStop() + 1);
+						}
+					satellites[j].setIndexSatStart(0); 
+					flagPaint = true;
+					repaint();
+					startTimer(j);
+		 }
+		}
+		}
+	}
+
+	
+	public void ConversExcel(String csvFilename, int indexSat,String satDir,String OnDirFile,String OffDirFile,JTextArea param1,String name) throws NumberFormatException, IOException{
 		csvReader = new CSVReader(new FileReader(csvFilename));
 		String[] row;
-		NumOfParam = 0;
-		PointList = new Vector<>();
-		exParam = new Vector<>();
+		allocateSatellite(indexSat, satDir, OnDirFile, OffDirFile,param1,name);
+		
 		while((row = csvReader.readNext()) != null){
-			if(NumOfParam != 0){
+			if(satellites[indexSat].getNumOfParam() != 0){
 				initAllParam();
 				int x = Math.round(Float.valueOf(row[20]));
 				int y = Math.round(Float.valueOf(row[19]));
@@ -317,40 +352,43 @@ public class BuffImage extends JPanel {
 				int y1 = Math.round(mid_y - y_pix_size * y );
 				
 			if (row.length >= 21){	//have to be 21 param 
-				exParam.add(new ExcelParameters(Integer.parseInt(row[0]), Float.parseFloat(row[1]), Float.parseFloat(row[2]), Float.parseFloat(row[3]), Float.parseFloat(row[4]), Float.parseFloat(row[5]), Float.parseFloat(row[6]), Float.parseFloat(row[7]), Float.parseFloat(row[8]), Float.parseFloat(row[9]),Float.parseFloat(row[10]), 
+				satellites[indexSat].getExParam().add(new ExcelParameters(Integer.parseInt(row[0]), Float.parseFloat(row[1]), Float.parseFloat(row[2]), Float.parseFloat(row[3]), Float.parseFloat(row[4]), Float.parseFloat(row[5]), Float.parseFloat(row[6]), Float.parseFloat(row[7]), Float.parseFloat(row[8]), Float.parseFloat(row[9]),Float.parseFloat(row[10]), 
 						Float.parseFloat(row[11]), Float.parseFloat(row[12]), Float.parseFloat(row[13]), Float.parseFloat(row[14]), Float.parseFloat(row[15]), Integer.parseInt(row[16]), Float.parseFloat(row[17]), Float.parseFloat(row[18]), Float.parseFloat(row[19]), Float.parseFloat(row[20]),row));
 			}
-			synchronized(PointList){
-				PointList.add(new Point(x1,y1));
+			satellites[indexSat].getPointList().add(new Point(x1,y1));
 			}
-			}
-			NumOfParam++;
+			satellites[indexSat].setNumOfParam(satellites[indexSat].getNumOfParam() + 1);
 		}
 	}
 
+	
+	
 	//-------------------------------------------------Getters and setters---------------------------------//
+	
+	public void setActiveSatellite(int index){
+		if (satellites[index] != null)
+			satellites[index].setFlagActive(true);
+	}
+	
+	public void setUnActiveSatellite(int index){
+		if (satellites[index] != null)
+			satellites[index].setFlagActive(false);
+	}
+	
+	public Boolean getActiveSatellite (int index){
+		if (satellites[index] != null)
+			return satellites[index].getFlagActive();
+		return null;
+	}
+	
+	
+	
 	public BufferedImage getHugeImage() {
 		return hugeImage;
 	}
 
 	public void setHugeImage(BufferedImage hugeImage) {
 		this.hugeImage = hugeImage;
-	}
-
-	public JLabel getJlb() {
-		return jlb;
-	}
-
-	public void setJlb(JLabel jlb) {
-		this.jlb = jlb;
-	}
-
-	public Vector<Point> getPointList() {
-		return PointList;
-	}
-
-	public void setPointList(Vector<Point> pointList) {
-		PointList = pointList;
 	}
 
 	public CSVReader getCsvReader() {
@@ -457,14 +495,7 @@ public class BuffImage extends JPanel {
 		this.mid_y = mid_y;
 	}
 
-	public String getCsvFilename() {
-		return csvFilename;
-	}
 
-	public void setCsvFilename(String csvFilename) {
-		this.csvFilename = csvFilename;
-	}
-	
 	public boolean isFlag() {
 		return flagPaint;
 	}
@@ -483,30 +514,6 @@ public class BuffImage extends JPanel {
 	public void setIntervalDrawing(int intervalDrawing) {
 		this.intervalDrawing = intervalDrawing;
 	}
-	
-	public int getIndexStart() {
-		return indexStart;
-	}
 
-	public void setIndexStart(int indexStart) {
-		this.indexStart = indexStart;
-	}
-	
-	public int getIndexStop() {
-		return indexStop;
-	}
-
-	public void setIndexStop(int indexStop) {
-		this.indexStop = indexStop;
-	} 
-	
-	public JTextArea getParam() {
-		return param;
-	}
-
-	public void setParam(JTextArea param) {
-		this.param = param;
-	}
-	
 }
 
