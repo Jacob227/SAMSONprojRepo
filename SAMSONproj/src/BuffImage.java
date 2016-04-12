@@ -261,7 +261,21 @@ public class BuffImage extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 	    	//System.out.println("hiiiiii i'm hereeee");
+<<<<<<< HEAD
+=======
+	    	if (indexSatStart < indexSatStop){
+	    		param.setFont(new Font("Sarif",Font.BOLD,12));
+	    		param.append("Latitude: " +exParam.get(indexSatStart).getAllData()[19].trim() + ",	Longitude: " + exParam.get(indexSatStart).getAllData()[20]+",  " );
+	    		int cnt = 0;
+	    		for(int k=0;k<19;k++){
+	    			if(ExcelParameters.ValidParam[k]==true){
+	    				cnt++;
+	    				param.append(ExcelParameters.NameParams[k].trim()+": " +exParam.get(indexSatStart).getAllData()[k].trim()+",  ");			
+	    				if(cnt%4 == 0){
+	    					param.append("\n");
+>>>>>>> branch '2d_branch_new' of https://github.com/Jacob227/SAMSONprojRepo.git
 
+<<<<<<< HEAD
 	    	if (satRef.getIndexSatStart() < satRef.getIndexSatStop()){
 
 	    		satRef.getParam().setFont(new Font("Sarif",Font.BOLD,12));
@@ -274,17 +288,27 @@ public class BuffImage extends JPanel {
 	    				if(cnt%4 == 0){
 	    					satRef.getParam().append("\n");
 
+=======
+>>>>>>> branch '2d_branch_new' of https://github.com/Jacob227/SAMSONprojRepo.git
 	    				}
 	    			}
 	    		}
 				if (cnt>=4)
 				{
+<<<<<<< HEAD
 					satRef.getParam().append("\n----------------------------------------------------------------------------------\n");
 				}
 				else 
 					satRef.getParam().append("\n");
 				
 	    		satRef.setIndexSatStart(satRef.getIndexSatStart() + 1);
+=======
+					param.append("\n----------------------------------------------------------------------------------\n");
+				}
+				else param.append("\n");
+
+	    		indexSatStart++;
+>>>>>>> branch '2d_branch_new' of https://github.com/Jacob227/SAMSONprojRepo.git
 	    		repaint();
 	    	}
 	    	else{
